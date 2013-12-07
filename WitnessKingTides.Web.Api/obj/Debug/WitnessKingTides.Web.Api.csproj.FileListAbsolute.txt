@@ -1,0 +1,14 @@
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\WitnessKingTides.Web.Api.dll.config
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\WitnessKingTides.Web.Api.dll
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\WitnessKingTides.Web.Api.pdb
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\Newtonsoft.Json.dll
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\System.Net.Http.Formatting.dll
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\System.Web.Http.dll
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\System.Web.Http.WebHost.dll
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\Newtonsoft.Json.xml
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\System.Net.Http.Formatting.xml
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\System.Web.Http.xml
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\bin\System.Web.Http.WebHost.xml
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\obj\Debug\WitnessKingTides.Web.Api.csprojResolveAssemblyReference.cache
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\obj\Debug\WitnessKingTides.Web.Api.dll
+C:\Dev\Git\rhok-melbourne\WitnessKingTides.Web.Api\WitnessKingTides.Web.Api\obj\Debug\WitnessKingTides.Web.Api.pdb

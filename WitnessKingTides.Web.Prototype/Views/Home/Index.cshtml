@@ -1,0 +1,43 @@
+﻿@model WitnessKingTides.Web.Prototype.Models.WitnessPhotoViewModel
+@{
+    ViewBag.Title = "Witness King Tides Prototype";
+}
+
+<div class="row">
+    <h1>Witness King Tides Prototype</h1>
+    <form id="Upload-Photo-Form" enctype="multipart/form-data" action="@Url.Action("index")" method="post">
+        <div class="row">
+            <div class="col-md-8">
+                <label>Upload Photo</label>
+                <input type="file" name="Photo" id="Photo" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>First name</label>
+                @Html.TextBoxFor(model => model.FirstName)
+            </div>
+            <div class="col-md-4">
+                <label>Last name</label>
+                @Html.TextBoxFor(model => model.LastName)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <label>Description</label>
+                @Html.TextAreaFor(model => model.Description)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>File name:</label>
+                @Html.TextBoxFor(model => model.FlickrId, new { @readonly="readonly"})
+            </div>
+        </div>
+        <div class="row form-actions">
+            <div class="col-md-8">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
