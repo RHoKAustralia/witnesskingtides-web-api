@@ -7,29 +7,39 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WitnessKingTides.Web.Api.Models;
+using System.Configuration;
+using FlickrNet;
 
 namespace WitnessKingTides.Web.Api.Controllers
 {
     public class PhotoController : ApiController
     {
-        static readonly string ServerUploadFolder = Path.GetTempPath();
+        static readonly string FlickrApiKey;
+        static readonly string FlickrApiSecret;
+
+        static PhotoController()
+        {
+            FlickrApiKey = ConfigurationManager.AppSettings["Flickr-Key"];
+            FlickrApiSecret = ConfigurationManager.AppSettings["Flickr-Secret"];
+        }
 
         public string Get()
         {
-            return "Hello world";
+            return "Green Cross Australia Witness King Tides";
         }
 
         public UploadPhotoResult Post(TideTrackerInputModel inputModel)
         {
-            var flickrId = Guid.NewGuid();
-            var photoPath = Path.Combine(@"G:\Photos", flickrId + ".jpg");
+            var fileId = Guid.NewGuid();
+            inputModel.FileName = fileId + ".jpg";
+            var photoPath = Path.Combine(@"G:\Photos", inputModel.FileName);
 
             using (var stream = File.Open(photoPath, FileMode.CreateNew, FileAccess.Write))
             {
                 stream.Write(inputModel.Photo, 0, inputModel.Photo.Length);
             }
 
-            using (var textStream = File.CreateText(Path.Combine(@"G:\Photos", flickrId + ".json")))
+            using (var textStream = File.CreateText(Path.Combine(@"G:\Photos", fileId + ".json")))
             {
                 textStream.Write(Newtonsoft.Json.JsonConvert.SerializeObject(inputModel, Newtonsoft.Json.Formatting.Indented));
             }
@@ -47,10 +57,20 @@ namespace WitnessKingTides.Web.Api.Controllers
 
         private string UploadToFlickr(TideTrackerInputModel model)
         {
-            var flickr = new FlickrNet.Flickr("pwcberry@gmail.com","SamB3nto");
-            var auth = flickr.AuthOAuthCheckToken();
+            string flickrId = string.Empty;
 
-            return auth.Token;
+            var flickr = new Flickr(FlickrApiKey, FlickrApiSecret);
+
+            var auth = flickr.AuthOAuthGetAccessToken();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                memoryStream.Write(model.Photo, 0, model.Photo.Length);
+
+                flickrId = flickr.UploadPicture(memoryStream, model.FileName, null, model.Description, null, true, true, true, ContentType.Photo, SafetyLevel.None, HiddenFromSearch.Visible);
+            }
+
+            return flickrId;
         }
     }
 }

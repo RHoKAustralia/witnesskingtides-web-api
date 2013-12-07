@@ -21,6 +21,8 @@ namespace WitnessKingTides.Web.Api.Models
 
         public DateTime CreationTime { get; set; }
 
+        public string FileName { get; set; }
+
         public byte[] Photo { get; set; }
     }
 }
