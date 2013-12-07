@@ -19,7 +19,8 @@ namespace WitnessKingTides.Web.Prototype.Controllers
         [ActionName("Index")]
         public ActionResult Index_Post(TideTrackerInputModel inputModel)
         {
-            if (Request.Files.Count == 1 && inputModel.Photo!=null) {
+            if (Request.Files.Count == 1 && inputModel.Photo != null)
+            {
 
                 var apiModel = new TideTrackerUploadPhotoApiModel
                 {
@@ -27,7 +28,8 @@ namespace WitnessKingTides.Web.Prototype.Controllers
                     FirstName = inputModel.FirstName,
                     LastName = inputModel.LastName,
                     Latitude = inputModel.Latitude,
-                    Longitude = inputModel.Longitude
+                    Longitude = inputModel.Longitude,
+                    CreationTime = DateTime.Now
                 };
 
                 using (var binaryReader = new BinaryReader(inputModel.Photo.InputStream))
@@ -46,12 +48,12 @@ namespace WitnessKingTides.Web.Prototype.Controllers
 
             return View(inputModel);
         }
-        
+
         //
         // GET: /Home/
         public ActionResult Index()
         {
             return View();
         }
-	}
+    }
 }

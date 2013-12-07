@@ -19,6 +19,8 @@ namespace WitnessKingTides.Web.Api.Models
 
         public decimal Longitude { get; set; }
 
+        public DateTime CreationTime { get; set; }
+
         public byte[] Photo { get; set; }
     }
 }

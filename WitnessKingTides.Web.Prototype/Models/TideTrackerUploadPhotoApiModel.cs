@@ -19,6 +19,8 @@ namespace WitnessKingTides.Web.Prototype.Models
 
         public string Email { get; set; }
 
+        public DateTime CreationTime { get; set; }
+
         public byte[] Photo { get; set; }
     }
 }

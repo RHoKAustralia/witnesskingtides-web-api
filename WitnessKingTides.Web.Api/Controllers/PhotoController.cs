@@ -37,11 +37,20 @@ namespace WitnessKingTides.Web.Api.Controllers
             var result = new UploadPhotoResult
             {
                 Latitude = inputModel.Latitude,
-                Longitude = inputModel.Longitude,
-                FlickrId = flickrId.ToString()
+                Longitude = inputModel.Longitude
             };
 
+            result.FlickrId = UploadToFlickr(inputModel);
+
             return result;
+        }
+
+        private string UploadToFlickr(TideTrackerInputModel model)
+        {
+            var flickr = new FlickrNet.Flickr("pwcberry@gmail.com","SamB3nto");
+            var auth = flickr.AuthOAuthCheckToken();
+
+            return auth.Token;
         }
     }
 }
