@@ -61,14 +61,23 @@ namespace WitnessKingTides.Web.Api.Controllers
 
             var flickr = new Flickr(FlickrApiKey, FlickrApiSecret);
 
-            var auth = flickr.AuthOAuthGetAccessToken();
+            //var oauthRequestToken = flickr.OAuthGetRequestToken("http://www.witnesskingtides.com/");
+            //var ouathRequestToken = flickr.OAuthGetRequestToken("http://www.flickr.com/auth-72157638432779974");
 
-            using (var memoryStream = new MemoryStream())
-            {
-                memoryStream.Write(model.Photo, 0, model.Photo.Length);
+            var client = new WebClient();
+            var miniToken = client.DownloadString("http://www.flickr.com/auth-72157638432779974");
 
-                flickrId = flickr.UploadPicture(memoryStream, model.FileName, null, model.Description, null, true, true, true, ContentType.Photo, SafetyLevel.None, HiddenFromSearch.Visible);
-            }
+            //flickr = new Flickr(FlickrApiKey, FlickrApiSecret, oauthRequestToken.Token);
+
+            //var auth = flickr.OAuthGetAccessToken(oauthRequestToken.Token, oauthRequestToken.TokenSecret, "72157638432779974");
+
+            //var auth = flickr.AuthOAuthGetAccessToken();
+            //using (var memoryStream = new MemoryStream())
+            //{
+            //    memoryStream.Write(model.Photo, 0, model.Photo.Length);
+
+            //    flickrId = flickr.UploadPicture(memoryStream, model.FileName, null, model.Description, null, true, true, true, ContentType.Photo, SafetyLevel.None, HiddenFromSearch.Visible);
+            //}
 
             return flickrId;
         }
