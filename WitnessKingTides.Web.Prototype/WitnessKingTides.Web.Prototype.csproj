@@ -109,7 +109,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\WitnessPhotoViewModel.cs" />
+    <Compile Include="Models\TideTrackerUploadPhotoApiModel.cs" />
+    <Compile Include="Models\TideTrackerUploadResult.cs" />
+    <Compile Include="Models\TideTrackerInputModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

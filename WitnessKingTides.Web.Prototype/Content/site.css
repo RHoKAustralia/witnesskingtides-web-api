@@ -1,5 +1,5 @@
 ﻿.row {
-    padding-bottom:0.75em;
+    padding-bottom: 0.75em;
 }
 
 div[class*=col-] > label {
@@ -11,22 +11,23 @@ div[class*=col-] > label {
     box-sizing: border-box;
 }
 
-div[class*=col-] > input[type=text],
+div[class*=col-] > input:not([type=radio]),
+div[class*=col-] > input:not([type=checkbox]),
 div[class*=col-] > textarea {
-    width:100%;
-    float:left;
-    padding-top:0.5em;
+    width: 100%;
+    float: left;
+    padding-top: 0.5em;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
 
 .form-actions {
-    border-top:1px solid #CCC;
+    border-top: 1px solid #CCC;
 }
 
-.form-actions .btn-primary {
-    margin-top:10px;
-    padding-top:10px;
-    float:right;
-}
+    .form-actions .btn-primary {
+        margin-top: 10px;
+        padding-top: 10px;
+        float: right;
+    }

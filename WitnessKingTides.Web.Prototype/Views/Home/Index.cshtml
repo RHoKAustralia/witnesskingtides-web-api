@@ -1,4 +1,4 @@
-﻿@model WitnessKingTides.Web.Prototype.Models.WitnessPhotoViewModel
+﻿@model WitnessKingTides.Web.Prototype.Models.TideTrackerInputModel
 @{
     ViewBag.Title = "Witness King Tides Prototype";
 }
@@ -10,6 +10,12 @@
             <div class="col-md-8">
                 <label>Upload Photo</label>
                 <input type="file" name="Photo" id="Photo" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <label>Email</label>
+                <input type="email" id="Email" name="Email" />
             </div>
         </div>
         <div class="row">
@@ -30,8 +36,8 @@
         </div>
         <div class="row">
             <div class="col-md-4">
-                <label>File name:</label>
-                @Html.TextBoxFor(model => model.FlickrId, new { @readonly="readonly"})
+                <label>Flickr ID:</label>
+                @Html.TextBoxFor(model => model.FlickrId, new { @readonly = "readonly" })
             </div>
         </div>
         <div class="row form-actions">
@@ -39,5 +45,17 @@
                 <input type="submit" value="Upload" class="btn btn-primary" />
             </div>
         </div>
+        <input type="hidden" id="Longitude" name="Longitude" />
+        <input type="hidden" id="Latitude" name="Latitude" />
     </form>
 </div>
+@section PageScriptReady {
+    <script>
+        (function ($) {
+            $("#Email").val("pwcberry@gmail.com");
+            $("#FirstName").val("Peter");
+            $("#Latitude").val("135");
+            $("#Longitude").val("-35");
+        }(jQuery));
+    </script>
+}

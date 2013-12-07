@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WitnessKingTides.Web.Api.Models
+namespace WitnessKingTides.Web.Prototype.Models
 {
-    public class UploadPhotoResult
+    public class TideTrackerUploadResult
     {
         public string FlickrId { get; set; }
 

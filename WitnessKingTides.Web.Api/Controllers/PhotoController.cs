@@ -19,25 +19,26 @@ namespace WitnessKingTides.Web.Api.Controllers
             return "Hello world";
         }
 
-        public async Task<UploadPhotoResult> Post()
+        public UploadPhotoResult Post(TideTrackerInputModel inputModel)
         {
-            // Verify that this is an HTML Form file upload request
-            if (!Request.Content.IsMimeMultipartContent("form-data"))
+            var flickrId = Guid.NewGuid();
+            var photoPath = Path.Combine(@"G:\Photos", flickrId + ".jpg");
+
+            using (var stream = File.Open(photoPath, FileMode.CreateNew, FileAccess.Write))
             {
-                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.UnsupportedMediaType));
+                stream.Write(inputModel.Photo, 0, inputModel.Photo.Length);
             }
 
-            // Create a stream provider for setting up output streams
-            MultipartFormDataStreamProvider streamProvider = new MultipartFormDataStreamProvider(ServerUploadFolder);
-
-            // Read the MIME multipart asynchronously content using the stream provider we just created.
-            await Request.Content.ReadAsMultipartAsync(streamProvider);
+            using (var textStream = File.CreateText(Path.Combine(@"G:\Photos", flickrId + ".json")))
+            {
+                textStream.Write(Newtonsoft.Json.JsonConvert.SerializeObject(inputModel, Newtonsoft.Json.Formatting.Indented));
+            }
 
             var result = new UploadPhotoResult
             {
-                FileName = streamProvider.FileData.Select(file => file.LocalFileName).FirstOrDefault(),
-                Latitude = 0,
-                Longitude = 0
+                Latitude = inputModel.Latitude,
+                Longitude = inputModel.Longitude,
+                FlickrId = flickrId.ToString()
             };
 
             return result;

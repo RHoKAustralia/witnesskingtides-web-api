@@ -17,12 +17,13 @@ namespace WitnessKingTides.Web.Prototype.Controllers
 
         [HttpPost]
         [ActionName("Index")]
-        public ActionResult Index_Post(WitnessPhotoViewModel inputModel)
+        public ActionResult Index_Post(TideTrackerInputModel inputModel)
         {
             if (Request.Files.Count == 1 && inputModel.Photo!=null) {
 
-                var apiModel = new WitnessPhotoApiModel
+                var apiModel = new TideTrackerUploadPhotoApiModel
                 {
+                    Email = inputModel.Email,
                     FirstName = inputModel.FirstName,
                     LastName = inputModel.LastName,
                     Latitude = inputModel.Latitude,
@@ -37,9 +38,10 @@ namespace WitnessKingTides.Web.Prototype.Controllers
                 var apiData = JsonConvert.SerializeObject(apiModel);
                 var client = new WebClient();
                 client.Headers.Add("Content-Type", "application/json");
-                client.UploadString(new Uri(WebApiUrl), "POST", apiData);
+                var response = client.UploadString(new Uri(WebApiUrl), "POST", apiData);
 
-                inputModel.FlickrId = Guid.NewGuid().ToString();
+                var outputModel = JsonConvert.DeserializeObject<TideTrackerUploadResult>(response);
+                inputModel.FlickrId = outputModel.FlickrId;
             }
 
             return View(inputModel);
