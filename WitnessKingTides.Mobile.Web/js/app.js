@@ -371,6 +371,7 @@ var MapView = Backbone.View.extend({
             new OpenLayers.Feature.Vector(
                 pt, { flickrId: data.flickrId })
         ]);
+        this.photosLayer.redraw();
     },
 	createFlickrPhotoLayer: function() {
 		var style = new OpenLayers.Style({
