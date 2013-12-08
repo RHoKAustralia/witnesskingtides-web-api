@@ -87,7 +87,7 @@
     </Compile>
     <Compile Include="Models\KingTideModel.cs" />
     <Compile Include="Models\UploadPhotoResult.cs" />
-    <Compile Include="Models\WitnessPhotoInputModel.cs" />
+    <Compile Include="Models\TideTrackerInputModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

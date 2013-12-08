@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WitnessKingTides.Web.Api", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WitnessKingTides.Web.Prototype", "WitnessKingTides.Web.Prototype\WitnessKingTides.Web.Prototype.csproj", "{9033B02A-E785-487A-84B2-7832949028EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WitnessKingTides.Mobile.Web", "WitnessKingTides.Mobile.Web\WitnessKingTides.Mobile.Web.csproj", "{06092CD7-C738-4553-8500-806F8E1C2232}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9033B02A-E785-487A-84B2-7832949028EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9033B02A-E785-487A-84B2-7832949028EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9033B02A-E785-487A-84B2-7832949028EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06092CD7-C738-4553-8500-806F8E1C2232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06092CD7-C738-4553-8500-806F8E1C2232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06092CD7-C738-4553-8500-806F8E1C2232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06092CD7-C738-4553-8500-806F8E1C2232}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
