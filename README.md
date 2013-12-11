@@ -32,6 +32,8 @@ This repository includes the HTML5 web frontend (previously under: https://githu
  * moment.js 2.4.0 (http://momentjs.com/)
  * validate.js 1.3 (http://rickharrison.github.com/validate.js)
 
+Icons used in this app courtesy of Font Awesome (http://fontawesome.io/) and Yusuke Kamiyamane (http://p.yusukekamiyamane.com/)
+
 Demo
 ====
 
