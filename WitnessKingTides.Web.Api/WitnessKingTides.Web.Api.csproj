@@ -14,7 +14,7 @@
     <RootNamespace>WitnessKingTides.Web.Api</RootNamespace>
     <AssemblyName>WitnessKingTides.Web.Api</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <TargetFrameworkProfile />
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />

@@ -130,6 +130,101 @@ OpenLayers.Format.Flickr = OpenLayers.Class(OpenLayers.Format, {
     }
 });
 
+/* Copyright (c) 2006-2012 by OpenLayers Contributors (see authors.txt for
+ * full list of contributors). Published under the 2-clause BSD license.
+ * See license.txt in the OpenLayers distribution or repository for the
+ * full text of the license. */
+
+/**
+ * @requires OpenLayers/Control/Panel.js
+ */
+
+/**
+ * Class: OpenLayers.Control.TextButtonPanel
+ * The TextButtonPanel is a panel designed primarily to hold TextButton
+ * controls.  By default it has a displayClass of olControlTextButtonPanel,
+ * which hooks it to a set of text-appropriate styles in the default stylesheet.
+ *
+ * Inherits from:
+ *  - <OpenLayers.Control.Panel>
+ */
+OpenLayers.Control.TextButtonPanel = OpenLayers.Class(OpenLayers.Control.Panel, {
+
+    /**
+    * APIProperty: vertical
+    * {Boolean} Whether the button strip should appear vertically on the map.
+    */
+    vertical: false,
+
+    /**
+    * APIProperty: additionalClass
+    * {String} An additional class to be applied in addition to
+    * .olControlTextButtonPanel to allow for non-default positioning.
+    */
+    additionalClass: null,
+
+    /**
+    * Constructor: OpenLayers.Control.TextButtonPanel
+    * Create a panel for holding text-based button controls
+    *
+    * Parameters:
+    * options - {Object}
+    */
+
+    /**
+    * Method: draw
+    * Overrides the draw method in <OpenLayers.Control.Panel> by applying
+    * up to two additional CSS classes
+    * Returns:
+    * {DOMElement}
+    */
+    draw: function () {
+        OpenLayers.Control.Panel.prototype.draw.apply(this, arguments);
+        this.setOrientationClass();
+        this.setAdditionalClass();
+        return this.div;
+    },
+
+    /**
+    * Method: redraw
+    * Overrides the redraw method in <OpenLayers.Control.Panel> by setting
+    * the orientation class.
+    */
+    redraw: function () {
+        OpenLayers.Control.Panel.prototype.redraw.apply(this, arguments);
+        this.setOrientationClass();
+    },
+
+    /**
+    * Method: setOrientationClass
+    * Adds the "vertical" class if this TextButtonPanel should have a vertical,
+    * rather than horizontal, layout.
+    */
+    setOrientationClass: function () {
+        if (this.vertical) {
+            OpenLayers.Element.addClass(this.div, "vertical");
+        }
+        else {
+            OpenLayers.Element.removeClass(this.div, "vertical");
+        }
+    },
+
+    /**
+    * APIMethod: setAdditionalClass
+    * Sets an additional CSS class for this TextButtonPanel
+    * (for example, to override the default placement).  This
+    * allows more than one TextButtonPanel to exist on the map
+    * at once.
+    */
+    setAdditionalClass: function () {
+        if (!!this.additionalClass) {
+            OpenLayers.Element.addClass(this.div, this.additionalClass);
+        }
+    },
+
+    CLASS_NAME: "OpenLayers.Control.TextButtonPanel"
+});
+
 var MapView = Backbone.View.extend({
 	map: null,
     activeModal: null,
@@ -173,13 +268,56 @@ var MapView = Backbone.View.extend({
         });
         this.map.addControl(new OpenLayers.Control.Scale());
         this.map.addControl(new OpenLayers.Control.MousePosition({ displayProjection: "EPSG:4326" }));
+
+        var panel = new OpenLayers.Control.TextButtonPanel({
+            vertical: true,
+            additionalClass: "vpanel"
+        });
+
+        var that = this;
+
+        panel.addControls([
+            new OpenLayers.Control.Button({
+                trigger: function () {
+                    window.location.hash = "#home";
+                },
+                displayClass: 'wkt-btn-about'
+            }),
+            new OpenLayers.Control.Button({
+                trigger: function () {
+                    window.location.hash = "#upload";
+                },
+                displayClass: 'wkt-btn-upload'
+            }),
+            new OpenLayers.Control.Button({
+                trigger: function() {
+                    that.zoomToMylocation();
+                },
+                displayClass: 'wkt-btn-locate'
+            }),
+            new OpenLayers.Control.Button({
+                trigger: function() {
+                    that.initialView();
+                },
+                displayClass: 'wkt-btn-initialzoom'
+            })
+        ]);
+
+        this.map.addControl(panel);
+
+        //HACK: Have to insert this content at runtime
+        $("div.wkt-btn-aboutItemInactive").html("<i class='fa fa-info-circle'></i>");
+        $("div.wkt-btn-uploadItemInactive").html("<i class='fa fa-camera'></i>");
+        $("div.wkt-btn-locateItemInactive").html("<i class='fa fa-location-arrow'></i>");
+        $("div.wkt-btn-initialzoomItemInactive").html("<i class='fa fa-arrows-alt'></i>");
+
 		this.map.updateSize();
         this.createPositionLayer();
 		this.createFlickrPhotoLayer();
         this.createTideLayer();
 		this.map.events.register("moveend", this, this.onMoveEnd);
         this.map.events.register("changebaselayer", this, this.onBaseLayerChange);
-        this.setActiveBaseLayer($("a.base-layer-item[data-layer-name='goog-hybrid']"));
+        this.setActiveBaseLayer($("a.base-layer-item[data-layer-name='goog-phys']"));
 		//Initial view is Australia
         this.initialView();
         EventAggregator.on("addNewPhotoMarker", _.bind(this.onAddNewPhotoMarker, this));
@@ -189,18 +327,36 @@ var MapView = Backbone.View.extend({
     initialView: function() {
         this.map.zoomToExtent(new OpenLayers.Bounds(10470115.700925, -5508791.4417243, 19060414.686531, -812500.42453675), false);
     },
+    zoomToMylocation: function() {
+        if (typeof(navigator.geolocation) != 'undefined') {
+            navigator.geolocation.getCurrentPosition(_.bind(function(pos) { //Success
+                this.zoomLonLat(pos.coords.longitude, pos.coords.latitude, 14);
+            }, this), _.bind(function(pos) { //Failure
+                alert("Could not get your location");
+            }, this), { //Options
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 7000
+            });
+        } else {
+            alert("Your browser does not support geolocation");
+        }
+    },
+    zoomLonLat: function(lon, lat, level) {
+        var point = new OpenLayers.Geometry.Point(lon, lat);
+        point.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:3857"));
+        this.map.moveTo(new OpenLayers.LonLat(point.x, point.y), level);
+    },
     onShowPositionOnMap: function(e) {
         if (this.positionLayer) {
             this.positionLayer.removeAllFeatures();
 
-            var point = new OpenLayers.Geometry.Point(e.lon, e.lat);
-            point.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:3857"));
             var feat = new OpenLayers.Feature.Vector(point);
 
             this.positionLayer.addFeatures([ feat ]);
 
             var zoomLevel = 16;
-            this.map.moveTo(new OpenLayers.LonLat(point.x, point.y), zoomLevel);
+            this.zoomLonLat(e.lon, e.lat, zoomLevel);
         }
     },
     onToggleManualLocationRecording: function() {
@@ -260,11 +416,11 @@ var MapView = Backbone.View.extend({
         $("body").append(this.activeModal);
         this.activeModal.modal('show').on("hidden.bs.modal", function(e) {
             //You'd think boostrap modal would've removed this for you?
-            $(".modal-backdrop").remove();   
+            $(".modal-backdrop").remove();
         });
     },
     onBaseLayerChange: function(e) {
-        
+
     },
 	onMoveEnd: function(e) {
 		//logger.logi(this.map.getExtent());
@@ -403,7 +559,7 @@ var MapView = Backbone.View.extend({
                 thumbnail: function(feature) {
                 	if (feature.cluster.length <= 1) {
                 		return feature.cluster[0].attributes.img_url;
-                	}	
+                	}
                 	return "";
                 }
             }
@@ -539,7 +695,7 @@ var UploadPhotoView = Backbone.View.extend({
                     $("#" + errors[i].id).parent().addClass("has-error");
                     errorString += errors[i].message + '<br />';
                 }
-                
+
                 $("#errorSummary").html(errorString).show();
                 $("#btnSubmitUpload").removeClass("disabled");
                 $("#btnCancelUpload").removeClass("disabled");
@@ -556,9 +712,13 @@ var UploadPhotoView = Backbone.View.extend({
     insertPhotoMarker: function(lon, lat, flickrId) {
         EventAggregator.trigger("addNewPhotoMarker", { lon: lon, lat: lat, flickrId: flickrId });
     },
-    onFormSubmit: function(e) {
-        $("#btnSubmitUpload").addClass("disabled");
-        $("#btnCancelUpload").addClass("disabled");
+    onFormSubmit: function (e) {
+
+        var btnUp = $("#btnSubmitUpload");
+        var btnCancel = $("#btnCancelUpload");
+
+        btnUp.addClass("disabled");
+        btnCancel.addClass("disabled");
 
         var formData = new FormData();
         formData.append("Email", $("#txtEmail").val());
@@ -575,10 +735,16 @@ var UploadPhotoView = Backbone.View.extend({
             cache: false,
             contentType: false,
             processData: false
-        }).success(_.bind(function(data) {
+        }).success(_.bind(function (data) {
+            alert("Photo has been uploaded");
             this.insertPhotoMarker(data.Longitude, data.Latitude, data.FlickrId);
+            //Go home on completion
+            window.location.hash = "#home";
         }, this)).fail(function () {
+            alert("Failed to upload photo");
             console.error("Ajax failed");
+            btnUp.removeClass("disabled");
+            btnCancel.removeClass("disabled");
         })
         //$("#formStatus").html("")
 

@@ -1,10 +1,68 @@
-/*
+/**
+ * OpenLayers overrides
+ */
+.olControlZoom a {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/**
+ * OpenLayers TextButtonPanel
+ *
+ */
+.olControlTextButtonPanel.vpanel {
+  top: 90px;
+  left: 8px;
+  right: auto;
+}
+
+.olControlTextButtonPanel.hpanel {
+  top: auto;
+  bottom: 8px;
+  left: 8px;
+  right: auto;
+}
+div.olControlTextButtonPanel {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 4px;
+    padding: 2px;
+}
+div.olControlTextButtonPanel .olButton {
+    display: block;
+    margin: 1px;
+    width: 28px; /* Same size as +/- in zoom control */
+    height: 28px; /* Same size as +/- in zoom control */
+    font-size: 14px;
+    color: white;
+    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    background: #130085; /* fallback for IE - IE6 requires background shorthand*/
+    background: rgba(0, 60, 136, 0.5);
+    filter: alpha(opacity=80);
+}
+div.olControlTextButtonPanel .olButton:hover {
+    background: #130085; /* fallback for IE */
+    background: rgba(0, 60, 136, 0.7);
+    filter: alpha(opacity=100);
+}
+@media only screen and (max-width: 600px) {
+    div.olControlTextButtonPanel .olButton:hover {
+        background: rgba(0, 60, 136, 0.5);
+    }
+}
+
+/**
  * Style tweaks
  * --------------------------------------------------
  */
 html,
 body {
-  background: url('../images/html-background.jpg');
+  background: url('/images/html-background.jpg');
   overflow-x: hidden; /* Prevent scroll on narrow devices */
 }
 body {
@@ -43,7 +101,7 @@ footer {
   background: #454545;
 }
 .carousel-control {
-  vertical-align: center  
+  vertical-align: center
 }
 .carousel-caption {
   position: inherit;
