@@ -11,7 +11,8 @@
  *
  */
 .olControlTextButtonPanel.vpanel {
-  top: 90px;
+  top: auto;
+  bottom: 40px;
   left: 8px;
   right: auto;
 }
@@ -78,7 +79,70 @@ footer {
 }
 
 /* App-specific */
-#map { height: 480px; }
+
+.offcanvas-shift {
+    left: -350px !important;
+}
+
+#mainContainer {
+  position: absolute;
+  bottom: 20px;
+  top: 70px;
+  left: 15px;
+  right: 15px;
+}
+
+#mainContainer .row {
+  height: 100%;
+  position: relative;
+  left: 15px;
+  right: 15px;
+}
+
+#responsiveMarker {
+    display: block;
+}
+
+@media(min-width: 1200px) {
+    #mainContainer .row {
+
+    }
+}
+@media(min-width: 992px) {
+    #mainContainer .row {
+      
+    }
+}
+@media(min-width: 768px) {
+    #mainContainer .row {
+      
+    }
+    #responsiveMarker {
+        display: none;
+    }
+}
+@media(max-width: 767px) {
+    #mainContainer {
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        top: 50px;
+    }
+    #mainContainer .row {
+        left: 0px;
+        right: 0px;
+    }
+    #sidebar {
+        width: 350px;
+    }
+}
+@media(max-width: 350px) {
+    #sidebar {
+        width: 100%;
+    }
+}
+
+#map { height: 100%; }
 /* #uploadForm { margin-top: 10px; } */
 #sidebarToggler {
   position: absolute;
@@ -144,7 +208,7 @@ footer {
 
   .row-offcanvas-right
   .sidebar-offcanvas {
-    right: -70%; /* 6 columns */
+    right: -350px;
   }
 
   .row-offcanvas-left
@@ -164,5 +228,13 @@ footer {
     position: absolute;
     top: 0;
     width: 72%; /* 6 columns */
+  }
+}
+@media screen and (max-width: 480px) {
+  .row-offcanvas-right
+  .sidebar-offcanvas {
+    right: -350px;
+    padding-right: 0px;
+    padding-left: 0px;
   }
 }

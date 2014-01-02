@@ -31,6 +31,7 @@
         <div class="panel panel-info">
             <div class="panel-heading">
                 <strong><i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
             </div>
             <div class="panel-body">
                 <p>Witness King Tides is a fun community photography project that helps us visualise the potential future impacts of sea level rise.</p>
@@ -57,6 +58,7 @@
         <div class="panel panel-info">
             <div class="panel-heading">
                 <strong><i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
             </div>
             <div class="panel-body">
                 <div id="errorSummary" class="alert alert-danger"></div>
@@ -109,6 +111,7 @@
         <div class="panel panel-info">
             <div class="panel-heading">
                 <strong><i class="fa fa-camera"></i>&nbsp;<%= title %></strong>
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
             </div>
             <div class="panel-body">
                 <div class="list-group">
@@ -253,8 +256,7 @@
             </div><!-- /.nav-collapse -->
         </div><!-- /.container -->
     </div><!-- /.navbar -->
-
-    <div class="container">
+    <div id="mainContainer" class="container">
 
         <div class="row row-offcanvas row-offcanvas-right">
             <p id="sidebarToggler" class="pull-right visible-xs">
@@ -263,15 +265,14 @@
             <div id="map" class="col-xs-12 col-sm-8">
 
             </div><!--/span-->
-
-            <div class="col-xs-6 col-sm-4 sidebar-offcanvas" id="sidebar" role="navigation">
+            <div id="sidebar" role="navigation" class="col-xs-6 col-sm-4 sidebar-offcanvas">
 
             </div><!--/span-->
         </div><!--/row-->
 
     </div><!--/.container-->
     <div id="debug"></div>
-
+    <div id="responsiveMarker"></div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

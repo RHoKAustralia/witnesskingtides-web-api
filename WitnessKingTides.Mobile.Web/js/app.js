@@ -813,7 +813,18 @@ var AppRouter = Backbone.Router.extend({
 			this.sidebarView.teardown();
 		this.sidebarView = view;
 		this.sidebarView.render();
-        $("#sidebarTogglerButton").html("<i class='"+ view.icon + "'></i>&nbsp;" + view.title);
+		$("#sidebarTogglerButton").html("<i class='" + view.icon + "'></i>&nbsp;" + view.title + "&nbsp;<i class='fa fa-angle-double-right'></i>");
+
+	    //If we can see our responsive marker it means we're in phone view,
+	    //so we should default the view to the sidebar
+		if ($("#responsiveMarker").is(":visible"))
+		    $('.row-offcanvas').addClass('offcanvas-shift');
+
+	    //Be sure to toggle the map view.
+		$('[data-toggle=offcanvas]').off("click");
+		$('[data-toggle=offcanvas]').on("click", function () {
+		    $('.row-offcanvas').toggleClass('offcanvas-shift');
+		});
 	},
 	home: function() {
 		logger.logi("route: home");
