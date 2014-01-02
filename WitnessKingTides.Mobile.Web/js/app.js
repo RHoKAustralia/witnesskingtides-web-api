@@ -306,7 +306,7 @@ var MapView = Backbone.View.extend({
         this.map.addControl(panel);
 
         //HACK: Have to insert this content at runtime
-        $("div.wkt-btn-aboutItemInactive").html("<i class='fa fa-info-circle'></i>");
+        $("div.wkt-btn-aboutItemInactive").html("<i class='fa fa-home'></i>");
         $("div.wkt-btn-uploadItemInactive").html("<i class='fa fa-camera'></i>");
         $("div.wkt-btn-locateItemInactive").html("<i class='fa fa-location-arrow'></i>");
         $("div.wkt-btn-initialzoomItemInactive").html("<i class='fa fa-arrows-alt'></i>");
@@ -636,8 +636,8 @@ var MapView = Backbone.View.extend({
 var HomeSidebarView = Backbone.View.extend({
 	template: null,
 	el: $("#sidebar"),
-    title: "About",
-    icon: "fa fa-info-circle",
+    title: "Home",
+    icon: "fa fa-home",
 	initialize: function(options) {
 		this.template = _.template($("#homeSidebar").html());
 	},
