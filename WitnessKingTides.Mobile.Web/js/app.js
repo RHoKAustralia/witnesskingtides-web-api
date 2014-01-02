@@ -351,11 +351,13 @@ var MapView = Backbone.View.extend({
         if (this.positionLayer) {
             this.positionLayer.removeAllFeatures();
 
+            var point = new OpenLayers.Geometry.Point(e.lon, e.lat);
+            point.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
             var feat = new OpenLayers.Feature.Vector(point);
 
             this.positionLayer.addFeatures([ feat ]);
 
-            var zoomLevel = 16;
+            var zoomLevel = 14;
             this.zoomLonLat(e.lon, e.lat, zoomLevel);
         }
     },
@@ -680,7 +682,8 @@ var UploadPhotoView = Backbone.View.extend({
         $("#uploadTarget").on("load", _.bind(this.onUploadCompleted, this));
         $("#errorSummary").hide();
         $("#formStatus").html("");
-        $("#uploadForm").on("submit", _.bind(this.onFormSubmit, this));
+        $("#btnSubmitUpload").on("click", _.bind(this.onFormSubmit, this));
+        //$("#uploadForm").on("submit", _.bind(this.onFormSubmit, this));
         var validator = new FormValidator("uploadForm", [
             { name: "Email", display: "Email", rules: "valid_email" },
             { name: "Email", display: "Email", rules: "required" },
