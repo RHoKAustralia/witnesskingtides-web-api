@@ -86,13 +86,13 @@
                             <div class="input-group">
                                 <input type="text" class="form-control input-sm" id="photoLocation" name="PhotoLocation" placeholder="Enter Photo Location" readonly="readonly" />
                                 <span class="input-group-btn">
-                                    <button class="btn btn-search" id="photoLocationButton"><i class="fa fa-map-marker"></i></button>
+                                    <a class="btn btn-search" id="photoLocationButton"><i class="fa fa-map-marker"></i></a>
                                 </span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label" for="txtDescription">Description</label>
-                            <textarea id="txtDescription" name="Description" class="form-control" rows="2" placeholder="Describe this photo"></textarea>
+                            <textarea id="txtDescription" name="Description" class="form-control" rows="1" placeholder="Describe this photo"></textarea>
                             <span id="photoFileButton" class="btn btn-default btn-file">
                                 <i class="fa fa-camera"></i>&nbsp;<span id="photoFileButtonText">Select Photo</span> <input type="file" id="photoFile" name="PhotoFile">
                             </span>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
 
-                    <button id="btnSubmitUpload" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;Submit</button>
+                    <a id="btnSubmitUpload" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;Submit</a>
                     <a id="btnCancelUpload" class="btn btn-danger" href="javascript:history.back()"><i class="fa fa-times"></i>&nbsp;Cancel</a>
                     <span id="formStatus"></span>
                 </form>
