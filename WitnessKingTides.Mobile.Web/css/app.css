@@ -4,6 +4,7 @@
 .olControlZoom a {
   width: 28px !important;
   height: 28px !important;
+  line-height: 28px !important; /* Ensures vertical alignment of text */
 }
 
 /**
@@ -36,6 +37,7 @@ div.olControlTextButtonPanel .olButton {
     margin: 1px;
     width: 28px; /* Same size as +/- in zoom control */
     height: 28px; /* Same size as +/- in zoom control */
+    line-height: 28px; /* Ensures vertical alignment of text */
     font-size: 14px;
     color: white;
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
