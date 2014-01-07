@@ -145,6 +145,17 @@ footer {
 }
 
 #map { height: 100%; }
+#sidebar {
+    height: 100%;
+}
+#photosPanel { 
+    height: 100%; 
+}
+#photosPanel .panel-body {
+    overflow-y: scroll;
+    height: 85%;
+}
+#homePanel { height: 100%; }
 /* #uploadForm { margin-top: 10px; } */
 #sidebarToggler {
     position: absolute;
@@ -155,6 +166,8 @@ footer {
 .olControlMousePosition { top: 0px; }
 .olControlScale { top: 15px; }
 .goog-sat-text { color: #FFFFFF; }
+.flickr-thumbnail-grid { margin-top: 50px; }
+.flickr-thumbnail { display: inline; margin-left: 4px; margin-right: 4px; }
 
 /* CSS hack to force centered images in Bootstrap Carousel */
 .carousel-item-inner {

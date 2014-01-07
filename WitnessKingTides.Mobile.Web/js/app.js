@@ -4,6 +4,9 @@ var debugMessage = function(msg) {
 
 var EventAggregator = _.extend({}, Backbone.Events);
 
+var PROJ_LL84        = new OpenLayers.Projection("EPSG:4326");
+var PROJ_WEBMERCATOR = new OpenLayers.Projection("EPSG:900913");
+
 /* 2014 tide data from original site */
 
 var TIDE_DATA = {
@@ -94,6 +97,134 @@ var LAYER_GOOG_SATELLITE = "goog-satellite";
 var LAYER_OSM = "osm";
 
 var MAX_INTERACTION_SCALE = 60000;
+
+/**
+ * An in-memory cache of flickr photo data, from which the layer markers are rendered
+ * and a thumbnail gallery is created from
+ */
+var FlickrPhotoCache = OpenLayers.Class({
+    photosPerPage: 50,
+    page: -1,
+    pages: 0,
+    total: 0,
+    _dataByPage: [],
+    _map: null,
+    initialize: function (options) {
+        this._map = options.map;
+        if (_.has(options, "photosPerPage"))
+            this.photosPerPage = options.photosPerPage;
+    },
+    getMapBounds: function() {
+        var bounds = this._map.getExtent();
+        bounds.transform(this._map.getProjectionObject(), PROJ_LL84);
+        return [
+            bounds.left,
+            bounds.bottom,
+            bounds.right,
+            bounds.top
+        ];
+    },
+    getCurrentPageData: function() {
+        return this._dataByPage[this.page];
+    },
+    getPageData: function (pageIndex) {
+        return this._dataByPage[pageIndex];
+    },
+    fetchPage: function (pageIndex) {
+        this.page = pageIndex;
+        EventAggregator.trigger("flickrPageLoading");
+        var that = this;
+        var promise = $.getJSON(
+            "http://api.flickr.com/services/rest?jsoncallback=?",
+            this.getRequestParams()
+        );
+        promise.done(function (data) {
+            if (data.photos.page == that._dataByPage.length)
+                that._dataByPage.push(data.photos);
+            else
+                that._dataByPage[data.photos.page - 1] = data.photos;
+            that.page = data.photos.page - 1;
+            that.pages = data.photos.pages;
+            that.total = parseInt(data.photos.total, 10);
+            EventAggregator.trigger("flickrPageLoaded", { cache: that, firstLoad: true });
+        }).fail(function () {
+            debugger;
+        });
+    },
+    loadCurrentPage: function() {
+        if (typeof (this._dataByPage[this.page]) == 'undefined') {
+            this.fetchPage(this.page);
+        } else { //Already fetched, just raise the necessary events
+            EventAggregator.trigger("flickrPageLoading");
+            EventAggregator.trigger("flickrPageLoaded", { cache: this, firstLoad: false });
+        }
+    },
+    loadNextPage: function() {
+        if (this.page < this.pages) {
+            this.page++;
+            if (typeof(this._dataByPage[this.page]) == 'undefined') {
+                this.fetchPage(this.page);
+            } else { //Already fetched, just raise the necessary events
+                EventAggregator.trigger("flickrPageLoading");
+                EventAggregator.trigger("flickrPageLoaded", { cache: this, firstLoad: false });
+            }
+        }
+    },
+    loadPrevPage: function() {
+        if (this.page > 0) {
+            this.page--;
+            if (typeof (this._dataByPage[this.page]) == 'undefined') { //Shouldn't happen, but just in case
+                this.fetchPage(this.page);
+            } else { //Already fetched, just raise the necessary events
+                EventAggregator.trigger("flickrPageLoading");
+                EventAggregator.trigger("flickrPageLoaded", { cache: this, firstLoad: false });
+            }
+        }
+    },
+    getRequestParams: function() {
+        return {
+            api_key: FLICKR_API_KEY,
+            format: 'json',
+            user_id: FLICKR_USER_ID,
+            method: 'flickr.photos.search',
+            extras: 'geo,url_s,date_taken,date_upload,owner_name,img_url',
+            per_page: this.photosPerPage,
+            page: (this.page + 1),
+            bbox: this.getMapBounds()
+        };
+    },
+    /**
+     * Clears the cache and re-requests the first "page" of photos from flickr using the
+     * new extents
+     */
+    updateExtents: function() {
+        this._dataByPage = [];
+        this.page = -1,
+        this.pages = 0;
+        this.total = 0;
+        EventAggregator.trigger("flickrCacheReset");
+        this.fetchPage(0);
+    }
+});
+/*
+
+            protocol: new OpenLayers.Protocol.Script({
+                url: "http://api.flickr.com/services/rest",
+                params: {
+                    api_key: FLICKR_API_KEY,
+                    format: 'json',
+                    user_id: FLICKR_USER_ID,
+                    method: 'flickr.photos.search',
+                    extras: 'geo,url_s',
+                    per_page: 250,
+                    page: 1,
+                    bbox: [-180, -90, 180, 90]
+                },
+                callbackKey: 'jsoncallback',
+                format: new OpenLayers.Format.Flickr()
+            }),
+
+*/
 
 /**
  * A specific format for parsing Flickr API JSON responses.
@@ -265,7 +396,21 @@ var MapView = Backbone.View.extend({
                 this.layers[LAYER_GOOG_SATELLITE],
                 this.layers[LAYER_OSM]
             ]
-        });
+		});
+		this.cache = new FlickrPhotoCache({ map: this.map, photosPerPage: 100 });
+
+		var that = this;
+
+		EventAggregator.on("loadCurrentFlickrPage", function () {
+		    that.cache.loadCurrentPage();
+		});
+		EventAggregator.on("loadNextFlickrPage", function () {
+		    that.cache.loadNextPage();
+		});
+		EventAggregator.on("loadPrevFlickrPage", function () {
+		    that.cache.loadPrevPage();
+		});
+
         this.map.addControl(new OpenLayers.Control.Scale());
         this.map.addControl(new OpenLayers.Control.MousePosition({ displayProjection: "EPSG:4326" }));
 
@@ -273,8 +418,6 @@ var MapView = Backbone.View.extend({
             vertical: true,
             additionalClass: "vpanel"
         });
-
-        var that = this;
 
         panel.addControls([
             new OpenLayers.Control.Button({
@@ -288,6 +431,12 @@ var MapView = Backbone.View.extend({
                     window.location.hash = "#upload";
                 },
                 displayClass: 'wkt-btn-upload'
+            }),
+            new OpenLayers.Control.Button({
+                trigger: function () {
+                    window.location.hash = "#photos";
+                },
+                displayClass: 'wkt-btn-photos'
             }),
             new OpenLayers.Control.Button({
                 trigger: function() {
@@ -308,6 +457,7 @@ var MapView = Backbone.View.extend({
         //HACK: Have to insert this content at runtime
         $("div.wkt-btn-aboutItemInactive").html("<i class='fa fa-home'></i>");
         $("div.wkt-btn-uploadItemInactive").html("<i class='fa fa-camera'></i>");
+        $("div.wkt-btn-photosItemInactive").html("<i class='fa fa-picture-o'></i>");
         $("div.wkt-btn-locateItemInactive").html("<i class='fa fa-location-arrow'></i>");
         $("div.wkt-btn-initialzoomItemInactive").html("<i class='fa fa-arrows-alt'></i>");
 
@@ -324,8 +474,10 @@ var MapView = Backbone.View.extend({
         EventAggregator.on("showPositionOnMap", _.bind(this.onShowPositionOnMap, this));
         EventAggregator.on("toggleManualLocationRecording", _.bind(this.onToggleManualLocationRecording, this));
 	},
-    initialView: function() {
-        this.map.zoomToExtent(new OpenLayers.Bounds(10470115.700925, -5508791.4417243, 19060414.686531, -812500.42453675), false);
+	initialView: function() {
+	    var bounds = new OpenLayers.Bounds(10470115.700925, -5508791.4417243, 19060414.686531, -812500.42453675);
+	    this.map.zoomToExtent(bounds, false);
+	    this.cache.updateExtents(bounds);
     },
     zoomToMylocation: function() {
         if (typeof(navigator.geolocation) != 'undefined') {
@@ -344,7 +496,7 @@ var MapView = Backbone.View.extend({
     },
     zoomLonLat: function(lon, lat, level) {
         var point = new OpenLayers.Geometry.Point(lon, lat);
-        point.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:3857"));
+        point.transform(PROJ_LL84, PROJ_WEBMERCATOR);
         this.map.moveTo(new OpenLayers.LonLat(point.x, point.y), level);
     },
     onShowPositionOnMap: function(e) {
@@ -352,7 +504,7 @@ var MapView = Backbone.View.extend({
             this.positionLayer.removeAllFeatures();
 
             var point = new OpenLayers.Geometry.Point(e.lon, e.lat);
-            point.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+            point.transform(PROJ_LL84, PROJ_WEBMERCATOR);
             var feat = new OpenLayers.Feature.Vector(point);
 
             this.positionLayer.addFeatures([ feat ]);
@@ -382,7 +534,7 @@ var MapView = Backbone.View.extend({
         this.bManualLocationRecording = false;
         alert("You have stopped manual recording of your location. Your photo location field has been updated");
         var center = this.map.getExtent().getCenterLonLat();
-        center.transform(new OpenLayers.Projection("EPSG:3857"), new OpenLayers.Projection("EPSG:4326"));
+        center.transform(PROJ_WEBMERCATOR, PROJ_LL84);
         EventAggregator.trigger("updatePhotoLocationField", { lon: center.lon, lat: center.lat });
     },
     setActiveBaseLayer: function(el) {
@@ -481,8 +633,8 @@ var MapView = Backbone.View.extend({
         });
 
         //Populate layer. Need to manually re-project to spherical mercator
-        var srcProj = new OpenLayers.Projection("EPSG:4326");
-        var dstProj = new OpenLayers.Projection("EPSG:3857");
+        var srcProj = PROJ_LL84;
+        var dstProj = PROJ_WEBMERCATOR;
         var features = [];
         for (var state in TIDE_DATA) {
             var ai = TIDE_DATA[state].areaInfo;
@@ -524,7 +676,7 @@ var MapView = Backbone.View.extend({
     },
     onAddNewPhotoMarker: function (data) {
         var pt = new OpenLayers.Geometry.Point(data.lon, data.lat);
-        pt.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:3857"));
+        pt.transform(PROJ_LL84, PROJ_WEBMERCATOR);
         this.photosLayer.addFeatures([
             new OpenLayers.Feature.Vector(
                 pt, { flickrId: data.flickrId })
@@ -567,27 +719,12 @@ var MapView = Backbone.View.extend({
             }
         });
 
+		this.flickrCluster = new OpenLayers.Strategy.Cluster();
 		this.photosLayer = new OpenLayers.Layer.Vector("Flickr Photos", {
-            projection: "EPSG:4326",
+            projection: "EPSG:900913",
             strategies: [
-                new OpenLayers.Strategy.Fixed(),
-                new OpenLayers.Strategy.Cluster()
+                this.flickrCluster
             ],
-            protocol: new OpenLayers.Protocol.Script({
-                url: "http://api.flickr.com/services/rest",
-                params: {
-                    api_key: FLICKR_API_KEY,
-                    format: 'json',
-                    user_id: FLICKR_USER_ID,
-                    method: 'flickr.photos.search',
-                    extras: 'geo,url_s',
-                    per_page: 250,
-                    page: 1,
-                    bbox: [-180, -90, 180, 90]
-                },
-                callbackKey: 'jsoncallback',
-                format: new OpenLayers.Format.Flickr()
-            }),
             styleMap: new OpenLayers.StyleMap({
                 "default": style,
                 "select": {
@@ -599,7 +736,36 @@ var MapView = Backbone.View.extend({
 
 		this.map.addLayer(this.photosLayer);
 		this.updateSelectControl();
-        this.photosLayer.events.on({"featureselected": _.bind(this.onPhotoFeatureSelected, this)});
+		this.photosLayer.events.on({ "featureselected": _.bind(this.onPhotoFeatureSelected, this) });
+
+		EventAggregator.on("flickrCacheReset", _.bind(this.onFlickrCacheReset, this));
+		EventAggregator.on("flickrPageLoaded", _.bind(this.onFlickrPageLoaded, this));
+	},
+	onFlickrCacheReset: function() {
+	    this.photosLayer.removeAllFeatures();
+	},
+	onFlickrPageLoaded: function(e) {
+	    var cache = e.cache;
+	    var data = cache.getCurrentPageData();
+	    var features = [];
+
+	    for (var i = 0; i < data.photo.length; i++) {
+	        var photo = data.photo[i];
+	        var geom = new OpenLayers.Geometry.Point(photo.longitude, photo.latitude);
+	        geom.transform(PROJ_LL84, this.map.getProjectionObject());
+	        features.push(
+                new OpenLayers.Feature.Vector(
+                    geom,
+                    photo
+                )
+            );
+	    }
+
+	    this.photosLayer.addFeatures(features);
+
+        //Force re-clustering
+	    this.flickrCluster.clusters = null;
+	    this.flickrCluster.cluster();
 	},
 	onPhotoFeatureSelected: function(event) {
         this.selectControl.unselect(event.feature);
@@ -649,6 +815,61 @@ var HomeSidebarView = Backbone.View.extend({
 	teardown: function() {
 
 	}
+});
+
+var PhotosView = Backbone.View.extend({
+    template: null,
+    pagerTemplate: null,
+    el: $("#sidebar"),
+    title: "Photos",
+    icon: "fa fa-picture-o",
+    initialize: function(options) {
+        this.template = _.template($("#photosSidebar").html());
+        this.pagerTemplate = _.template($("#albumPager").html());
+    },
+    render: function () {
+        $(this.el).html(this.template({ title: this.title, icon: this.icon }));
+        EventAggregator.on("flickrCacheReset", _.bind(this.onFlickrCacheReset, this));
+        EventAggregator.on("flickrPageLoading", _.bind(this.onFlickrPageLoading, this));
+        EventAggregator.on("flickrPageLoaded", _.bind(this.onFlickrPageLoaded, this));
+
+        EventAggregator.trigger("loadCurrentFlickrPage");
+    },
+    teardown: function () {
+
+    },
+    onFlickrCacheReset: function () {
+        $("div.album-pager").empty();
+        $(".flickr-thumbnail-grid", this.el).empty();
+    },
+    onFlickrPageLoading: function () {
+        $("div.album-pager").empty();
+        $(".flickr-thumbnail-grid", this.el).html("<div class='well'><i class='fa fa-spinner fa-spin'></i>&nbsp;Loading Page</div>");
+    },
+    onFlickrPageLoaded: function (e) {
+        $(".flickr-thumbnail-grid", this.el).empty();
+        var cache = e.cache;
+        var data = cache.getCurrentPageData();
+        this.loadData(data, (cache.page + 1), cache.pages, cache.total);
+    },
+    loadData: function(data, pageNo, pages, total) {
+        var html = "";
+        for (var i = 0; i < data.photo.length; i++) {
+            var photo = data.photo[i];
+            html += "<img class='thumbnail flickr-thumbnail' title='" + photo.title + "' alt='" + photo.title + "' width='64' height='64' src='" + photo.url_s + "' />";
+        }
+        $("div.album-pager").html(this.pagerTemplate({ pageNo: pageNo, pages: pages }));
+        $("a.next-album-page").on("click", _.bind(this.onNextAlbumPage, this));
+        $("a.prev-album-page").on("click", _.bind(this.onPrevAlbumPage, this));
+        $(".flickr-thumbnail-grid", this.el).append(html);
+        $("#photoStreamInfo").html("(" + total + " photos)");
+    },
+    onNextAlbumPage: function (e) {
+        EventAggregator.trigger("loadNextFlickrPage");
+    },
+    onPrevAlbumPage: function (e) {
+        EventAggregator.trigger("loadPrevFlickrPage");
+    }
 });
 
 var UploadPhotoView = Backbone.View.extend({
@@ -803,6 +1024,7 @@ var AppRouter = Backbone.Router.extend({
 	routes: {
 		"home": "home",
 		"upload": "upload",
+        "photos": "photos",
 		"*path": "defaultRoute"
 	},
 	setMapView: function() {
@@ -833,6 +1055,7 @@ var AppRouter = Backbone.Router.extend({
 		logger.logi("route: home");
         $("li.navbar-link").removeClass("active");
         $("li.home-link").addClass("active");
+        $("li.photos-link").removeClass("active");
 		this.setMapView();
 		this.setSidebar(new HomeSidebarView());
 	},
@@ -840,8 +1063,17 @@ var AppRouter = Backbone.Router.extend({
 		logger.logi("route: upload");
         $("li.navbar-link").removeClass("active");
         $("li.upload-link").addClass("active");
+        $("li.photos-link").removeClass("active");
 		this.setMapView();
 		this.setSidebar(new UploadPhotoView());
+	},
+	photos: function() {
+	    logger.logi("route: photos");
+	    $("li.navbar-link").removeClass("active");
+	    $("li.upload-link").removeClass("active");
+	    $("li.photos-link").addClass("active");
+	    this.setMapView();
+	    this.setSidebar(new PhotosView());
 	},
 	defaultRoute: function() {
 		logger.logi("unknown route. Going home");

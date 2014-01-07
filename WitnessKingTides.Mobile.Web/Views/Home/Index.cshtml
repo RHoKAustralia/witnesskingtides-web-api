@@ -28,14 +28,14 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="images/kingtide-apple-touch-icon.png" />
     <script id="homeSidebar" type="template">
-        <div class="panel panel-info">
+        <div id="homePanel" class="panel panel-info">
             <div class="panel-heading">
                 <strong><i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
                 <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
             </div>
             <div class="panel-body">
                 <p>Witness King Tides is a fun community photography project that helps us visualise the potential future impacts of sea level rise.</p>
-                <div id="legend">
+                <div id="legend" class="well">
                     <strong>Legend</strong>
                     <ul>
                         <li><img src="images/water.png" />&nbsp;&nbsp;King Tides</li>
@@ -43,13 +43,51 @@
                         <li><img src="images/marker.png" />&nbsp;&nbsp;Your current location</li>
                     </ul>
                 </div>
+                <div>
+                    <div class="list-group">
+                        <a class="list-group-item" href="#upload"><i class="fa fa-camera"></i>&nbsp;Upload a Photo<span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
+                        <a class="list-group-item" href="#photos"><i class="fa fa-picture-o"></i>&nbsp;View Photos<span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
+                        <!--
+            <a class="list-group-item" href="#tides"><i class="fa fa-search"></i>&nbsp;See Tides<span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
+            -->
+                    </div>
+                </div>
             </div>
-            <div class="panel-footer">
-                <div class="list-group">
-                    <a class="list-group-item" href="#upload"><i class="fa fa-camera"></i>&nbsp;Upload a Photo<span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
-                    <!--
-                    <a class="list-group-item" href="#tides"><i class="fa fa-search"></i>&nbsp;See Tides<span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
-                    -->
+        </div>
+    </script>
+    <script id="albumPager" type="template">
+        <div class="btn-toolbar pull-left" role="toolbar">
+            <div class="btn-group">
+                <a class="btn btn-primary btn-sm prev-album-page" title="Previous Page"><i class="fa fa-arrow-left"></i></a>
+                <a class="btn btn-primary btn-sm next-album-page" title="Next Page"><i class="fa fa-arrow-right"></i></a>
+            </div>
+            <!--
+            <div class="btn-group">
+                <a class="btn btn-primary btn-sm album-page-extents" title="Zoom to the geographic extents of this page of photos"><i class="fa fa-arrows-alt"></i></a>
+                <a class="btn btn-primary btn-sm album-year-filter" title="Filter this album by year of photo"><i class="fa fa-calendar"></i></a>
+                <a class="btn btn-primary btn-sm album-photoset-filter" title="Filter this album by photo set"><i class="fa fa-picture-o"></i></a>
+            </div>
+            -->
+        </div>
+        <span class="pull-right">
+            Page <%= pageNo %>/<%= pages %>
+        </span>
+    </script>
+    <script id="photosSidebar" type="template">
+        <div id="photosPanel" class="panel panel-info">
+            <div class="panel-heading">
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-left" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i>&nbsp;<i class="fa fa-globe"></i> Map</button>
+                <strong>&nbsp;<i class="<%= icon %>"></i>&nbsp;<%= title %>&nbsp;<span id="photoStreamInfo"></span></strong>
+            </div>
+            <div class="panel-body">
+                <div class="album-pager">
+                    
+                </div>
+                <div class="flickr-thumbnail-grid">
+
+                </div>
+                <div class="album-pager">
+
                 </div>
             </div>
         </div>
@@ -178,7 +216,7 @@
                                     <div class="item">
                                         <% } %>
                                         <div class="carousel-item-inner">
-                                            <img src="<%= photos[i].attributes.img_url %>" alt="<%= photos[i].attributes.title %>">
+                                            <img src="<%= photos[i].attributes.url_s %>" alt="<%= photos[i].attributes.title %>">
                                             <div class="carousel-caption">
                                                 <%= photos[i].attributes.title %>
                                             </div>
@@ -233,14 +271,15 @@
                 <ul class="nav navbar-nav">
                     <li class="active navbar-link home-link"><a href="#home"><i class="fa fa-home"></i>&nbsp;Home</a></li>
                     <li class="navbar-link upload-link"><a href="#upload"><i class="fa fa-camera"></i>&nbsp;Upload Photo</a></li>
+                    <li class="navbar-link photos-link"><a href="#photos"><i class="fa fa-picture-o"></i>&nbsp;View Photos</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i>&nbsp;Map Layers<b class="caret"></b></a>
                         <ul id="map-layer-switcher" class="dropdown-menu">
-                            <li><a href="#" class="base-layer-item" data-layer-name="goog-phys"><i class="fa fa-globe"></i>&nbsp;Google Physical</a></li>
-                            <li><a href="#" class="base-layer-item" data-layer-name="goog-street"><i class="fa fa-globe"></i>&nbsp;Google Street</a></li>
-                            <li><a href="#" class="base-layer-item" data-layer-name="goog-hybrid"><i class="fa fa-globe"></i>&nbsp;Google Hybrid</a></li>
-                            <li><a href="#" class="base-layer-item" data-layer-name="goog-satellite"><i class="fa fa-globe"></i>&nbsp;Google Satellite</a></li>
-                            <li><a href="#" class="base-layer-item" data-layer-name="osm"><i class="fa fa-globe"></i>&nbsp;OpenStreetMap</a></li>
+                            <li><a href="javascript:void(0)" class="base-layer-item" data-layer-name="goog-phys"><i class="fa fa-globe"></i>&nbsp;Google Physical</a></li>
+                            <li><a href="javascript:void(0)" class="base-layer-item" data-layer-name="goog-street"><i class="fa fa-globe"></i>&nbsp;Google Street</a></li>
+                            <li><a href="javascript:void(0)" class="base-layer-item" data-layer-name="goog-hybrid"><i class="fa fa-globe"></i>&nbsp;Google Hybrid</a></li>
+                            <li><a href="javascript:void(0)" class="base-layer-item" data-layer-name="goog-satellite"><i class="fa fa-globe"></i>&nbsp;Google Satellite</a></li>
+                            <li><a href="javascript:void(0)" class="base-layer-item" data-layer-name="osm"><i class="fa fa-globe"></i>&nbsp;OpenStreetMap</a></li>
                         </ul>
                     </li>
                     <!--
