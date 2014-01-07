@@ -2,9 +2,9 @@
  * OpenLayers overrides
  */
 .olControlZoom a {
-  width: 28px !important;
-  height: 28px !important;
-  line-height: 28px !important; /* Ensures vertical alignment of text */
+    width: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important; /* Ensures vertical alignment of text */
 }
 
 /**
@@ -12,17 +12,17 @@
  *
  */
 .olControlTextButtonPanel.vpanel {
-  top: auto;
-  bottom: 40px;
-  left: 8px;
-  right: auto;
+    top: auto;
+    bottom: 40px;
+    left: 8px;
+    right: auto;
 }
 
 .olControlTextButtonPanel.hpanel {
-  top: auto;
-  bottom: 8px;
-  left: 8px;
-  right: auto;
+    top: auto;
+    bottom: 8px;
+    left: 8px;
+    right: auto;
 }
 div.olControlTextButtonPanel {
     position: absolute;
@@ -65,19 +65,19 @@ div.olControlTextButtonPanel .olButton:hover {
  */
 html,
 body {
-  background: url('/images/html-background.jpg');
-  overflow-x: hidden; /* Prevent scroll on narrow devices */
+    background: url('/images/html-background.jpg');
+    overflow-x: hidden; /* Prevent scroll on narrow devices */
 }
 body {
-  padding-top: 51px;
+    
 }
 @media (min-width: 768px) {
-  body {
-    padding-top: 70px;
-  }
+    body {
+        padding-top: 70px;
+    }
 }
 footer {
-  padding: 30px 0;
+    padding: 30px 0;
 }
 
 /* App-specific */
@@ -87,18 +87,18 @@ footer {
 }
 
 #mainContainer {
-  position: absolute;
-  bottom: 20px;
-  top: 70px;
-  left: 15px;
-  right: 15px;
+    position: absolute;
+    bottom: 50px;
+    top: 70px;
+    left: 15px;
+    right: 15px;
 }
 
 #mainContainer .row {
-  height: 100%;
-  position: relative;
-  left: 15px;
-  right: 15px;
+    height: 100%;
+    position: relative;
+    left: 15px;
+    right: 15px;
 }
 
 #responsiveMarker {
@@ -147,10 +147,10 @@ footer {
 #map { height: 100%; }
 /* #uploadForm { margin-top: 10px; } */
 #sidebarToggler {
-  position: absolute;
-  z-index: 999;
-  right: 0;
-  top: 50px;
+    position: absolute;
+    z-index: 999;
+    right: 0;
+    top: 50px;
 }
 .olControlMousePosition { top: 0px; }
 .olControlScale { top: 15px; }
@@ -158,22 +158,22 @@ footer {
 
 /* CSS hack to force centered images in Bootstrap Carousel */
 .carousel-item-inner {
-  text-align: center;
-  img {
-    margin: 0 auto;
-  }
+    text-align: center;
+    img {
+        margin: 0 auto;
+    }
 }
 .carousel-bg-dark {
-  background: #454545;
+    background: #454545;
 }
 .carousel-control {
-  vertical-align: center
+    vertical-align: center
 }
 .carousel-caption {
-  position: inherit;
+    position: inherit;
 }
 .carousel-indicators {
-  bottom: 0px;
+    bottom: 0px;
 }
 
 /* Give some style to the file input field */
@@ -201,42 +201,42 @@ footer {
  * --------------------------------------------------
  */
 @media screen and (max-width: 767px) {
-  .row-offcanvas {
-    position: relative;
-    -webkit-transition: all 0.25s ease-out;
-    -moz-transition: all 0.25s ease-out;
-    transition: all 0.25s ease-out;
-  }
+    .row-offcanvas {
+        position: relative;
+        -webkit-transition: all 0.25s ease-out;
+        -moz-transition: all 0.25s ease-out;
+        transition: all 0.25s ease-out;
+    }
 
-  .row-offcanvas-right
-  .sidebar-offcanvas {
-    right: -350px;
-  }
+    .row-offcanvas-right
+    .sidebar-offcanvas {
+        right: -350px;
+    }
 
-  .row-offcanvas-left
-  .sidebar-offcanvas {
-    left: -50%; /* 6 columns */
-  }
+    .row-offcanvas-left
+    .sidebar-offcanvas {
+        left: -50%; /* 6 columns */
+    }
 
-  .row-offcanvas-right.active {
-    right: 70%; /* 6 columns */
-  }
+    .row-offcanvas-right.active {
+        right: 70%; /* 6 columns */
+    }
 
-  .row-offcanvas-left.active {
-    left: 50%; /* 6 columns */
-  }
+    .row-offcanvas-left.active {
+        left: 50%; /* 6 columns */
+    }
 
-  .sidebar-offcanvas {
-    position: absolute;
-    top: 0;
-    width: 72%; /* 6 columns */
-  }
+    .sidebar-offcanvas {
+        position: absolute;
+        top: 0;
+        width: 72%; /* 6 columns */
+    }
 }
 @media screen and (max-width: 480px) {
-  .row-offcanvas-right
-  .sidebar-offcanvas {
-    right: -350px;
-    padding-right: 0px;
-    padding-left: 0px;
-  }
+    .row-offcanvas-right
+    .sidebar-offcanvas {
+        right: -350px;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
 }
