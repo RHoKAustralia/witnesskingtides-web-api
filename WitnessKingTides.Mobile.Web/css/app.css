@@ -63,10 +63,17 @@ div.olControlTextButtonPanel .olButton:hover {
  * Style tweaks
  * --------------------------------------------------
  */
+@media (min-width: 767px) and (max-width: 992px) {
+    .navbar-btn-label {
+        display: none;
+    }
+}
+
 html,
 body {
     background: url('/images/html-background.jpg');
     overflow-x: hidden; /* Prevent scroll on narrow devices */
+    overflow-y: hidden; /* Prevent scroll on narrow devices */
 }
 body {
     
@@ -148,14 +155,14 @@ footer {
 #sidebar {
     height: 100%;
 }
-#photosPanel { 
+#legend { padding-left: 10px; }
+#photosPanel, #homePanel, #uploadFormPanel { 
     height: 100%; 
 }
-#photosPanel .panel-body {
-    overflow-y: scroll;
+#photosPanel .panel-body, #homePanel .panel-body, #uploadFormPanel .panel-body {
+    overflow-y: auto;
     height: 85%;
 }
-#homePanel { height: 100%; }
 /* #uploadForm { margin-top: 10px; } */
 #sidebarToggler {
     position: absolute;

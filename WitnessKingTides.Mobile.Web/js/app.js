@@ -187,7 +187,7 @@ var FlickrPhotoCache = OpenLayers.Class({
             format: 'json',
             user_id: FLICKR_USER_ID,
             method: 'flickr.photos.search',
-            extras: 'geo,url_s,date_taken,date_upload,owner_name,img_url',
+            extras: 'geo,url_s,url_c,url_o,date_taken,date_upload,owner_name,original_format,o_dims,views',
             per_page: this.photosPerPage,
             page: (this.page + 1),
             bbox: this.getMapBounds()
@@ -410,6 +410,10 @@ var MapView = Backbone.View.extend({
 		EventAggregator.on("loadPrevFlickrPage", function () {
 		    that.cache.loadPrevPage();
 		});
+		EventAggregator.on("showPhotos", _.bind(this.onShowPhotos, this));
+		EventAggregator.on("showModal", _.bind(function (e) {
+		    this.showModal(e.template);
+		}, this));
 
         this.map.addControl(new OpenLayers.Control.Scale());
         this.map.addControl(new OpenLayers.Control.MousePosition({ displayProjection: "EPSG:4326" }));
@@ -767,13 +771,31 @@ var MapView = Backbone.View.extend({
 	    this.flickrCluster.clusters = null;
 	    this.flickrCluster.cluster();
 	},
+	onShowPhotos: function (e) {
+	    var getPhotoUrlFunc = function (photo) {
+	        return photo.attributes.url_s;
+	        /*
+	        return OpenLayers.String.format("http://farm${farmid}.staticflickr.com/${serverid}/${id}_${secret}_o.${imgformat}", {
+	            farmid: photo.attributes.farm,
+	            serverid: photo.attributes.server,
+	            id: photo.attributes.id,
+	            secret: photo.attributes.secret,
+	            imgformat: photo.attributes.originalformat
+	        });*/
+	    };
+	    this.showModal(this.photoModalTemplate({
+	        photos: e.photos,
+	        getPhotoUrl: getPhotoUrlFunc
+	    }));
+	},
 	onPhotoFeatureSelected: function(event) {
-        this.selectControl.unselect(event.feature);
+	    this.selectControl.unselect(event.feature);
+	    
         if (event.feature.cluster.length == 1) {
-            this.showModal(this.photoModalTemplate({ photos: event.feature.cluster }));
+            this.onShowPhotos({ photos: event.feature.cluster });
         } else {
             if (this.map.getScale() < MAX_INTERACTION_SCALE) {
-                this.showModal(this.photoModalTemplate({ photos: event.feature.cluster }));
+                this.onShowPhotos({ photos: event.feature.cluster });
                 /*
                 if (event.feature.cluster.length > 1) {
                     alert("Selected multiple photos");
@@ -789,7 +811,7 @@ var MapView = Backbone.View.extend({
                     this.map.zoomToExtent(bounds);
                 } else {
                     //alert("Selected photo");
-                    this.showModal(this.photoModalTemplate({ photos: event.feature.cluster }));
+                    this.onShowPhotos({ photos: event.feature.cluster });
                 }
             }
         }
@@ -850,18 +872,37 @@ var PhotosView = Backbone.View.extend({
         $(".flickr-thumbnail-grid", this.el).empty();
         var cache = e.cache;
         var data = cache.getCurrentPageData();
-        this.loadData(data, (cache.page + 1), cache.pages, cache.total);
+        this.loadData(data, cache);
     },
-    loadData: function(data, pageNo, pages, total) {
+    loadData: function (data, cache) {
+        var pageNo = (cache.page + 1);
+        var pages = cache.pages;
+        var total = cache.total;
         var html = "";
         for (var i = 0; i < data.photo.length; i++) {
             var photo = data.photo[i];
-            html += "<img class='thumbnail flickr-thumbnail' title='" + photo.title + "' alt='" + photo.title + "' width='64' height='64' src='" + photo.url_s + "' />";
+            html += "<a href='javascript:void(0)' class='photo-link' data-photo-page-index='" + (pageNo - 1) + "' data-photo-id='" + photo.id + "'><img class='thumbnail flickr-thumbnail' title='" + photo.title + "' alt='" + photo.title + "' width='64' height='64' src='" + photo.url_s + "' /></a>";
         }
         $("div.album-pager").html(this.pagerTemplate({ pageNo: pageNo, pages: pages }));
         $("a.next-album-page").on("click", _.bind(this.onNextAlbumPage, this));
         $("a.prev-album-page").on("click", _.bind(this.onPrevAlbumPage, this));
         $(".flickr-thumbnail-grid", this.el).append(html);
+        $("a.photo-link").on("click", _.bind(function (e) {
+            var lnk = $(e.delegateTarget);
+            var pageIndex = lnk.attr("data-photo-page-index");
+            var id = lnk.attr("data-photo-id");
+            var data = cache.getPageData(pageIndex);
+            for (var j = 0; j < data.photo.length; j++) {
+                if (data.photo[j].id == id) {
+                    EventAggregator.trigger("showPhotos", {
+                        photos: [
+                            { attributes: data.photo[j] }
+                        ]
+                    })
+                    break;
+                }
+            }
+        }, this));
         $("#photoStreamInfo").html("(" + total + " photos)");
     },
     onNextAlbumPage: function (e) {
@@ -904,6 +945,10 @@ var UploadPhotoView = Backbone.View.extend({
         $("#errorSummary").hide();
         $("#formStatus").html("");
         $("#btnSubmitUpload").on("click", _.bind(this.onFormSubmit, this));
+        $("#chkAcceptTerms").change(_.bind(this.onAgreementChanged, this));
+        $("#chkAcceptCC").change(_.bind(this.onAgreementChanged, this));
+        $("a[data-wkt-role='terms']").on("click", _.bind(this.onShowTerms, this));
+
         //$("#uploadForm").on("submit", _.bind(this.onFormSubmit, this));
         var validator = new FormValidator("uploadForm", [
             { name: "Email", display: "Email", rules: "valid_email" },
@@ -929,6 +974,16 @@ var UploadPhotoView = Backbone.View.extend({
         });
 
         EventAggregator.on("updatePhotoLocationField", _.bind(this.onUpdatePhotoLocationField, this));
+	},
+	onShowTerms: function(e) {
+	    var tpl = _.template($("#termsModal").html());
+	    EventAggregator.trigger("showModal", { template: tpl() });
+	},
+	onAgreementChanged: function(e) {
+	    if ($("#chkAcceptTerms").is(":checked") && $("#chkAcceptCC").is(":checked"))
+	        $("#btnSubmitUpload").removeClass("disabled");
+	    else
+	        $("#btnSubmitUpload").addClass("disabled");
 	},
     onUploadCompleted: function(e) {
         alert("Upload complete");
@@ -1042,8 +1097,8 @@ var AppRouter = Backbone.Router.extend({
 
 	    //If we can see our responsive marker it means we're in phone view,
 	    //so we should default the view to the sidebar
-		if ($("#responsiveMarker").is(":visible"))
-		    $('.row-offcanvas').addClass('offcanvas-shift');
+		//if ($("#responsiveMarker").is(":visible"))
+		//    $('.row-offcanvas').addClass('offcanvas-shift');
 
 	    //Be sure to toggle the map view.
 		$('[data-toggle=offcanvas]').off("click");

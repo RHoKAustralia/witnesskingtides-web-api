@@ -30,18 +30,20 @@
     <script id="homeSidebar" type="template">
         <div id="homePanel" class="panel panel-info">
             <div class="panel-heading">
-                <strong><i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
-                <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
+                <strong>&nbsp;<i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-left" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i>&nbsp;<i class="fa fa-globe"></i> Map</button>
             </div>
             <div class="panel-body">
                 <p>Witness King Tides is a fun community photography project that helps us visualise the potential future impacts of sea level rise.</p>
-                <div id="legend" class="well">
+                <div class="well">
                     <strong>Legend</strong>
-                    <ul>
-                        <li><img src="images/water.png" />&nbsp;&nbsp;King Tides</li>
-                        <li><img src="images/camera.png" />&nbsp;&nbsp;Flickr Photos</li>
-                        <li><img src="images/marker.png" />&nbsp;&nbsp;Your current location</li>
-                    </ul>
+                    <div id="legend">
+                        <ul class="list-unstyled">
+                            <li><img src="images/water.png" />&nbsp;&nbsp;King Tides</li>
+                            <li><img src="images/camera.png" />&nbsp;&nbsp;Flickr Photos</li>
+                            <li><img src="images/marker.png" />&nbsp;&nbsp;Your current location</li>
+                        </ul>
+                    </div>
                 </div>
                 <div>
                     <div class="list-group">
@@ -93,10 +95,10 @@
         </div>
     </script>
     <script id="uploadSidebar" type="template">
-        <div class="panel panel-info">
+        <div id="uploadFormPanel" class="panel panel-info">
             <div class="panel-heading">
-                <strong><i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
-                <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
+                <strong>&nbsp;<i class="<%= icon %>"></i>&nbsp;<%= title %></strong>
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-left" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i>&nbsp;<i class="fa fa-globe"></i> Map</button>
             </div>
             <div class="panel-body">
                 <div id="errorSummary" class="alert alert-danger"></div>
@@ -124,7 +126,7 @@
                             <div class="input-group">
                                 <input type="text" class="form-control input-sm" id="photoLocation" name="PhotoLocation" placeholder="Enter Photo Location" readonly="readonly" />
                                 <span class="input-group-btn">
-                                    <a class="btn btn-search" id="photoLocationButton"><i class="fa fa-map-marker"></i></a>
+                                    <a class="btn btn-primary btn-sm btn-search" id="photoLocationButton"><i class="fa fa-map-marker"></i></a>
                                 </span>
                             </div>
                         </div>
@@ -137,8 +139,16 @@
                             <iframe id="uploadTarget" name="uploadTarget" src="about:blank" style="width:0;height:0;border:0px solid #fff;" />
                         </div>
                     </div>
+                    <div class="well well-sm">
+                        <div class="control-group">
+                            <input type="checkbox" id="chkAcceptTerms" name="chkAcceptTerms" /> I have read and agree to the <a href="javascript:void(0)" data-wkt-role="terms">terms and conditions</a>
+                        </div>
+                        <div class="control-group">
+                            <input type="checkbox" id="chkAcceptCC" name="chkAcceptCC" /> I agree to share my photos under the <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">Non Commercial-Share Alike license</a>
+                        </div>
+                    </div>
 
-                    <a id="btnSubmitUpload" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;Submit</a>
+                    <a id="btnSubmitUpload" class="btn btn-success disabled"><i class="fa fa-check"></i>&nbsp;Submit</a>
                     <a id="btnCancelUpload" class="btn btn-danger" href="javascript:history.back()"><i class="fa fa-times"></i>&nbsp;Cancel</a>
                     <span id="formStatus"></span>
                 </form>
@@ -148,8 +158,8 @@
     <script id="tidesSidebar" type="template">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <strong><i class="fa fa-camera"></i>&nbsp;<%= title %></strong>
-                <button type="button" class="btn btn-primary btn-xs visible-xs pull-right" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i> View Map</button>
+                <strong>&nbsp;<i class="fa fa-camera"></i>&nbsp;<%= title %></strong>
+                <button type="button" class="btn btn-primary btn-xs visible-xs pull-left" data-toggle="offcanvas"><i class="fa fa-angle-double-left"></i>&nbsp;<i class="fa fa-globe"></i> Map</button>
             </div>
             <div class="panel-body">
                 <div class="list-group">
@@ -162,6 +172,29 @@
                 </div>
             </div>
         </div>
+    </script>
+    <script id="termsModal" type="template">
+        <div class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"><i class="fa fa-legal"></i>&nbsp;Terms&nbsp;&amp;&nbsp;Conditions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            You grant permission to Green Cross Australia and its partners in relation to the Witness King Tides projects (including the Commonwealth Department of Climate Change and Energy Efficiency, the Queensland Department of Community Safety and the Queensland Department of Environment and Resource Management) to use photos and images you upload to the site for photo mosaic, website display, presentation, evaluation and other publications and activities under the terms of the <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank"> NonCommercial-ShareAlike creative commons license.</a>
+                        </p>
+                        <p>
+                            You are responsible for ensuring that you have the right to upload the image and that it is appropriate for display. Green Cross Australia reserves the right to remove any images in its absolute discretion.
+                        </p>
+                        <p>
+                            To the extent permitted by law, Green Cross Australia takes no responsibility for any loss or damage that any participant may incur  as a result  of taking part in the Witness King Tides project.
+                        </p>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </script>
     <script id="tideModal" type="template">
         <div class="modal fade" role="dialog">
@@ -216,7 +249,7 @@
                                     <div class="item">
                                         <% } %>
                                         <div class="carousel-item-inner">
-                                            <img src="<%= photos[i].attributes.url_s %>" alt="<%= photos[i].attributes.title %>">
+                                            <img src="<%= getPhotoUrl(photos[i]) %>" alt="<%= photos[i].attributes.title %>">
                                             <div class="carousel-caption">
                                                 <%= photos[i].attributes.title %>
                                             </div>
@@ -269,9 +302,9 @@
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active navbar-link home-link"><a href="#home"><i class="fa fa-home"></i>&nbsp;Home</a></li>
-                    <li class="navbar-link upload-link"><a href="#upload"><i class="fa fa-camera"></i>&nbsp;Upload Photo</a></li>
-                    <li class="navbar-link photos-link"><a href="#photos"><i class="fa fa-picture-o"></i>&nbsp;View Photos</a></li>
+                    <li class="active navbar-link home-link"><a href="#home" title="Home"><i class="fa fa-home"></i>&nbsp;<span><span class="navbar-btn-label">Home</span></span></a></li>
+                    <li class="navbar-link upload-link"><a href="#upload" title="Upload Photo"><i class="fa fa-camera"></i>&nbsp;<span><span class="navbar-btn-label">Upload Photo</span></span></a></li>
+                    <li class="navbar-link photos-link"><a href="#photos" title="View Photos"><i class="fa fa-picture-o"></i>&nbsp;<span><span class="navbar-btn-label">View Photos</span></span></a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i>&nbsp;Map Layers<b class="caret"></b></a>
                         <ul id="map-layer-switcher" class="dropdown-menu">
