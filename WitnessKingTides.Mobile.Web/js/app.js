@@ -953,7 +953,56 @@ var UploadPhotoView = Backbone.View.extend({
         $("#chkAcceptCC").change(_.bind(this.onAgreementChanged, this));
         $("a[data-wkt-role='terms']").on("click", _.bind(this.onShowTerms, this));
 
-        //$("#uploadForm").on("submit", _.bind(this.onFormSubmit, this));
+        $("#uploadForm").validate({
+            rules: {
+                "Email": {
+                    required: true,
+                    email: true
+                },
+                "FirstName": {
+                    required: true
+                },
+                "PhotoFile": {
+                    required: true
+                }
+            },
+            messages: {
+                "Email": {
+                    required: "Email is required",
+                    email: "Email is an invalid email address"
+                },
+                "FirstName": {
+                    required: "First Name is required"
+                },
+                "PhotoFile": {
+                    required: "Please attach a photo"
+                }
+            },
+            focusInvalid: true,
+            showErrors: function (errorMap, errorList) {
+                $("div.control-group").removeClass("has-error")
+                                      .removeClass("has-warning");
+                var errors = errorList;
+                if (errorList.length > 0) {
+                    var errorString = '<strong><i class="fa fa-exclamation-triangle"></i>The following validation errors were found</strong><br/><ul>';
+                    for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
+                        var el = $(errors[i].element);
+                        if (el.hasClass("fileButton"))
+                            el.parent().addClass("btn-danger");
+                        else
+                            el.parent().addClass("has-error");
+
+                        errorString += "<li>" + errors[i].message + '</li>';
+                    }
+                    errorString += "</ul>";
+                    $("#errorSummary").html(errorString).show();
+                } else {
+                    $("#errorSummary").hide();
+                }
+            }
+        });
+
+        /*
         var validator = new FormValidator("uploadForm", [
             { name: "Email", display: "Email", rules: "valid_email" },
             { name: "Email", display: "Email", rules: "required" },
@@ -976,7 +1025,7 @@ var UploadPhotoView = Backbone.View.extend({
                 $("#errorSummary").html("").hide();
             }
         });
-
+        */
         EventAggregator.on("updatePhotoLocationField", _.bind(this.onUpdatePhotoLocationField, this));
 	},
 	onShowTerms: function(e) {
@@ -995,6 +1044,9 @@ var UploadPhotoView = Backbone.View.extend({
     insertPhotoMarker: function(lon, lat, flickrId) {
         EventAggregator.trigger("addNewPhotoMarker", { lon: lon, lat: lat, flickrId: flickrId });
     },
+    validateForm: function(callback) {
+        callback($("#uploadForm").valid());
+    },
     onFormSubmit: function (e) {
 
         var btnUp = $("#btnSubmitUpload");
@@ -1003,35 +1055,41 @@ var UploadPhotoView = Backbone.View.extend({
         btnUp.addClass("disabled");
         btnCancel.addClass("disabled");
 
-        var formData = new FormData();
-        formData.append("Email", $("#txtEmail").val());
-        formData.append("FirstName", $("#txtFirstName").val());
-        formData.append("PhotoLocation", $("#photoLocation").val());
-        formData.append("CreationDate", $("#dtDate").val());
-        formData.append("PhotoFile", $("#photoFile")[0].files[0]);
-        e.preventDefault();
+        this.validateForm(_.bind(function (bResult) {
+            if (bResult) {
+                var formData = new FormData();
+                formData.append("Email", $("#txtEmail").val());
+                formData.append("FirstName", $("#txtFirstName").val());
+                formData.append("LastName", $("#txtSurname").val());
+                formData.append("PhotoLocation", $("#photoLocation").val());
+                formData.append("CreationDate", $("#dtDate").val());
+                formData.append("PhotoFile", $("#photoFile")[0].files[0]);
+                formData.append("Description", $("#txtDescription").val());
+                e.preventDefault();
 
-        $.ajax({
-            url: '/home/savephoto/',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false
-        }).success(_.bind(function (data) {
-            alert("Photo has been uploaded");
-            this.insertPhotoMarker(data.Longitude, data.Latitude, data.FlickrId);
-            //Go home on completion
-            window.location.hash = "#home";
-        }, this)).fail(function () {
-            alert("Failed to upload photo");
-            console.error("Ajax failed");
-            btnUp.removeClass("disabled");
-            btnCancel.removeClass("disabled");
-        })
-        //$("#formStatus").html("")
-
-        return false;
+                $.ajax({
+                    url: '/home/savephoto/',
+                    type: 'POST',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                }).success(_.bind(function (data) {
+                    alert("Photo has been uploaded");
+                    this.insertPhotoMarker(data.Longitude, data.Latitude, data.FlickrId);
+                    //Go home on completion
+                    window.location.hash = "#home";
+                }, this)).fail(function () {
+                    alert("Failed to upload photo");
+                    console.error("Ajax failed");
+                    btnUp.removeClass("disabled");
+                    btnCancel.removeClass("disabled");
+                });
+            } else {
+                btnUp.removeClass("disabled");
+                btnCancel.removeClass("disabled");
+            }
+        }, this));
     },
     onUpdatePhotoLocationField: function(e) {
         $("#photoLocation").val(e.lon + " " + e.lat);
@@ -1047,7 +1105,7 @@ var UploadPhotoView = Backbone.View.extend({
         }
     },
     onPhotoFileChanged: function(e) {
-        $("#photoFileButton").addClass("btn-success");
+        $("#photoFileButton").removeClass("btn-danger").addClass("btn-success");
         $("#photoFileButtonText").html("Photo Selected");
     },
     onPhotoLocationClick: function(e) {

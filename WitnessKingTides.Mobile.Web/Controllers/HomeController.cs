@@ -55,6 +55,7 @@ namespace WitnessKingTides.Mobile.Web.Controllers
                     Email = inputModel.Email,
                     FirstName = inputModel.FirstName,
                     LastName = inputModel.LastName,
+                    Description = inputModel.Description,
                     Latitude = Decimal.Parse(latLong[1]),
                     Longitude = Decimal.Parse(latLong[0]),
                     CreationTime = creationDate
