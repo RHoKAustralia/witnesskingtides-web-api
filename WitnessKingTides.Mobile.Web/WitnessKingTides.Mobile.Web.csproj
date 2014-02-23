@@ -133,6 +133,7 @@
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\jquery-1.10.2.js" />
     <Content Include="js\jquery-1.10.2.min.js" />
+    <Content Include="js\Modernizr.js" />
     <Content Include="js\moment.min.js" />
     <Content Include="js\OpenLayers.debug.js" />
     <Content Include="js\OpenLayers.js" />

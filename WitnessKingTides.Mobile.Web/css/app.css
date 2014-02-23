@@ -93,6 +93,10 @@ footer {
     left: -350px !important;
 }
 
+#progress {
+    width: 100%;
+}
+
 #mainContainer {
     position: absolute;
     bottom: 50px;

@@ -2,6 +2,9 @@ var debugMessage = function(msg) {
 	$("#debug").html(msg);
 }
 
+Modernizr.addTest('formdata', 'FormData' in window);
+Modernizr.addTest('xhr2', 'FormData' in window && 'ProgressEvent' in window);
+
 var EventAggregator = _.extend({}, Backbone.Events);
 
 var PROJ_LL84        = new OpenLayers.Projection("EPSG:4326");
@@ -1028,6 +1031,19 @@ var UploadPhotoView = Backbone.View.extend({
         */
         EventAggregator.on("updatePhotoLocationField", _.bind(this.onUpdatePhotoLocationField, this));
 	},
+	showModal: function (html) {
+	    if (this.activeModal) {
+	        this.activeModal.remove();
+	        //You'd think boostrap modal would've removed this for you?
+	        $(".modal-backdrop").remove();
+	    }
+	    this.activeModal = $(html);
+	    $("body").append(this.activeModal);
+	    this.activeModal.modal('show').on("hidden.bs.modal", function (e) {
+	        //You'd think boostrap modal would've removed this for you?
+	        $(".modal-backdrop").remove();
+	    });
+	},
 	onShowTerms: function(e) {
 	    var tpl = _.template($("#termsModal").html());
 	    EventAggregator.trigger("showModal", { template: tpl() });
@@ -1046,6 +1062,34 @@ var UploadPhotoView = Backbone.View.extend({
     },
     validateForm: function(callback) {
         callback($("#uploadForm").valid());
+    },
+    xhr2upload: function (url, formData, fnProgress) {
+        return $.ajax({
+            url: '/home/savephoto/',
+            type: 'POST',
+            data: formData,
+            xhr: function () {
+                myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload && fnProgress) {
+                    myXhr.upload.addEventListener('progress', function (prog) {
+                        var value = ~~((prog.loaded / prog.total) * 100);
+
+                        // if we passed a progress function
+                        if (fnProgress && typeof fnProgress == "function") {
+                            fnProgress(prog, value);
+
+                            // if we passed a progress element
+                        } else if (fnProgress) {
+                            $(fnProgress).val(value);
+                        }
+                    }, false);
+                }
+                return myXhr;
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
     },
     onFormSubmit: function (e) {
 
@@ -1067,21 +1111,47 @@ var UploadPhotoView = Backbone.View.extend({
                 formData.append("Description", $("#txtDescription").val());
                 e.preventDefault();
 
-                $.ajax({
-                    url: '/home/savephoto/',
-                    type: 'POST',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false
-                }).success(_.bind(function (data) {
+                var promise = null;
+                var progressModal = _.template($("#progressModal").html());
+                this.showModal(progressModal({}));
+                if (Modernizr.xhr2) {
+                    promise = this.xhr2upload("/home/savephoto/", formData, function (prog, value) {
+                        //console.log("Progress: " + prog + ", Value: " + value);
+                        $("#progress").val(value);
+                        if (value == 100) {
+                            $("#progressMessage").text("Awaiting server response");
+                            //debugger;
+                        }
+                    });
+                } else {
+                    promise = $.ajax({
+                        url: '/home/savephoto/',
+                        type: 'POST',
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                }
+
+                promise.success(_.bind(function (data) {
                     alert("Photo has been uploaded");
+                    if (this.activeModal) {
+                        this.activeModal.remove();
+                        //You'd think boostrap modal would've removed this for you?
+                        $(".modal-backdrop").remove();
+                    }
                     this.insertPhotoMarker(data.Longitude, data.Latitude, data.FlickrId);
                     //Go home on completion
                     window.location.hash = "#home";
-                }, this)).fail(function () {
-                    alert("Failed to upload photo");
-                    console.error("Ajax failed");
+                }, this)).fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("Failed to upload photo. Error: " + (errorThrown || "unknown") + ", status: " + textStatus);
+                    if (this.activeModal) {
+                        this.activeModal.remove();
+                        //You'd think boostrap modal would've removed this for you?
+                        $(".modal-backdrop").remove();
+                    }
+                    //console.error("Ajax failed");
                     btnUp.removeClass("disabled");
                     btnCancel.removeClass("disabled");
                 });
@@ -1199,7 +1269,7 @@ var AppRouter = Backbone.Router.extend({
 });
 
 var app = {
-	initialize: function() {
+    initialize: function () {
 		$('[data-toggle=offcanvas]').click(function() {
 		    $('.row-offcanvas').toggleClass('active');
 		});

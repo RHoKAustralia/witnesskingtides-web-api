@@ -175,6 +175,21 @@
             </div>
         </div>
     </script>
+    <script id="progressModal" type="template">
+        <div class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"><i class="fa fa-cloud-upload"></i>&nbsp;Uploading Photo</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><i class="fa fa-spinner fa-spin"></i>&nbsp;<span id="progressMessage">Uploading Photo. Please wait.</span></p>
+                        <progress id="progress" max="100" value="0" />
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </script>
     <script id="termsModal" type="template">
         <div class="modal fade" role="dialog">
             <div class="modal-dialog">

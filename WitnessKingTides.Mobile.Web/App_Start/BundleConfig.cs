@@ -57,6 +57,7 @@ namespace WitnessKingTides.Mobile.Web
 
                 //WKT app and libraries without a CDN clone
                 bundles.Add(new ScriptBundle("~/bundles/wktapp").Include(
+                    "~/js/Modernizr.js",
                     "~/Scripts/jquery.validate.js",
                     "~/js/bootstrap-datetimepicker.js",
                     "~/js/OpenLayers.debug.js",
@@ -99,6 +100,7 @@ namespace WitnessKingTides.Mobile.Web
 
                 //WKT app and libraries without a CDN clone
                 bundles.Add(new ScriptBundle("~/bundles/wktapp").Include(
+                    "~/js/Modernizr.js",
                     "~/Scripts/jquery.validate.js",
                     "~/js/bootstrap-datetimepicker.js",
                     "~/js/OpenLayers.js",
