@@ -116,6 +116,9 @@ var FlickrPhotoCache = OpenLayers.Class({
         this._map = options.map;
         if (_.has(options, "photosPerPage"))
             this.photosPerPage = options.photosPerPage;
+        EventAggregator.on("getPhotoPageBounds", _.bind(this.onGetPhotoPageBounds, this));
+        EventAggregator.on("resetPhotoFilter", _.bind(this.onResetPhotoFilter, this));
+        EventAggregator.on("applyPhotoFilter", _.bind(this.onApplyPhotoFilter, this));
     },
     getMapBounds: function() {
         var bounds = this._map.getExtent();
@@ -184,23 +187,58 @@ var FlickrPhotoCache = OpenLayers.Class({
             }
         }
     },
+    onGetPhotoPageBounds: function (e) {
+        if (typeof (this._dataByPage[this.page]) == 'undefined') {
+            e.callback(null);
+        } else {
+            var bounds = new OpenLayers.Bounds();
+            var photoset = this._dataByPage[this.page];
+            for (var i = 0; i < photoset.photo.length; i++) {
+                var photo = photoset.photo[i];
+                bounds.extendXY(photo.longitude, photo.latitude);
+            }
+            e.callback(bounds);
+        }
+    },
+    onResetPhotoFilter: function() {
+        this.args = null;
+        this.reset();
+    },
+    onApplyPhotoFilter: function(args) {
+        this.args = args;
+        this.reset();
+    },
     getRequestParams: function() {
-        return {
+        var params = {
             api_key: FLICKR_API_KEY,
             format: 'json',
             user_id: FLICKR_USER_ID,
             method: 'flickr.photos.search',
             extras: 'geo,url_s,url_c,url_o,date_taken,date_upload,owner_name,original_format,o_dims,views',
             per_page: this.photosPerPage,
-            page: (this.page + 1),
+            page: (this.page + 1)/*,
             bbox: this.getMapBounds()
+            */
         };
+
+        if (this.args && this.args.year) {
+            console.log("Filtering by year: " + this.args.year);
+            var dtStart = moment.utc([this.args.year, 0, 1]);
+            var dtEnd = moment.utc([this.args.year, 11, 31]);
+            console.log("Flickr date range: " + dtStart.unix() + " to " + dtEnd.unix());
+            params.min_taken_date = dtStart.unix();
+            params.max_taken_date = dtEnd.unix();
+        } 
+        return params;
     },
     /**
      * Clears the cache and re-requests the first "page" of photos from flickr using the
      * new extents
      */
     updateExtents: function() {
+        this.reset();
+    },
+    reset: function () {
         this._dataByPage = [];
         this.page = -1,
         this.pages = 0;
@@ -369,6 +407,7 @@ var MapView = Backbone.View.extend({
 	initialize: function(options) {
         this.tideModalTemplate = _.template($("#tideModal").html());
         this.photoModalTemplate = _.template($("#photoModal").html());
+        EventAggregator.on("mapZoomToBounds", _.bind(this.onMapZoomToBounds, this));
 	},
 	render: function() {
         this.layers = {};
@@ -505,6 +544,11 @@ var MapView = Backbone.View.extend({
         var point = new OpenLayers.Geometry.Point(lon, lat);
         point.transform(PROJ_LL84, PROJ_WEBMERCATOR);
         this.map.moveTo(new OpenLayers.LonLat(point.x, point.y), level);
+    },
+    onMapZoomToBounds: function(bounds) {
+        if (bounds != null) {
+            this.map.zoomToExtent(bounds);
+        }
     },
     onShowPositionOnMap: function(e) {
         if (this.positionLayer) {
@@ -893,6 +937,8 @@ var PhotosView = Backbone.View.extend({
         $("div.album-pager").html(this.pagerTemplate({ pageNo: pageNo, pages: pages }));
         $("a.next-album-page").on("click", _.bind(this.onNextAlbumPage, this));
         $("a.prev-album-page").on("click", _.bind(this.onPrevAlbumPage, this));
+        $("a.zoom-photo-page-bounds").on("click", _.bind(this.onZoomPhotoPageBounds, this));
+        $("a.filter-photostream").on("click", _.bind(this.onFilterPhotoStream, this));
         $(".flickr-thumbnail-grid", this.el).append(html);
         $("a.photo-link").on("click", _.bind(function (e) {
             var lnk = $(e.delegateTarget);
@@ -917,6 +963,40 @@ var PhotosView = Backbone.View.extend({
     },
     onPrevAlbumPage: function (e) {
         EventAggregator.trigger("loadPrevFlickrPage");
+    },
+    onZoomPhotoPageBounds: function (e) {
+        EventAggregator.trigger("getPhotoPageBounds", {
+            callback: function (bounds) {
+                //Map is in web mercator so our ll bounds must be transformed to it
+                if (bounds != null)
+                    bounds.transform(PROJ_LL84, PROJ_WEBMERCATOR);
+                EventAggregator.trigger("mapZoomToBounds", bounds);
+            }
+        });
+    },
+    onFilterPhotoStream: function (e) {
+        var templ = _.template($("#filterDialog").html());
+        //You'd think boostrap modal would've removed this for you?
+        $(".modal-backdrop").remove();
+        var dt = new Date();
+        var filterModal = $(templ({ year: this.filterYear || dt.getFullYear(), fromYear: 2011, toYear: dt.getFullYear() }));
+        $("body").append(filterModal);
+        filterModal.modal('show').on("hidden.bs.modal", function (e) {
+            filterModal.remove();
+            //You'd think boostrap modal would've removed this for you?
+            $(".modal-backdrop").remove();
+        });
+        filterModal.find("a.apply-filter").on("click", _.bind(function (e) {
+            EventAggregator.trigger("applyPhotoFilter", { year: $("#filterYear").val() });
+            filterModal.modal("hide");
+        }, this));
+        filterModal.find("a.reset-filter").on("click", _.bind(function (e) {
+            EventAggregator.trigger("resetPhotoFilter");
+            filterModal.modal("hide");
+        }, this));
+        filterModal.find("a.cancel-btn").on("click", _.bind(function (e) {
+            filterModal.modal("hide");
+        }, this));
     }
 });
 

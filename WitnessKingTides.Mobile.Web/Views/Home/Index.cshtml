@@ -63,6 +63,10 @@
                 <a class="btn btn-primary btn-sm prev-album-page" title="Previous Page"><i class="fa fa-arrow-left"></i></a>
                 <a class="btn btn-primary btn-sm next-album-page" title="Next Page"><i class="fa fa-arrow-right"></i></a>
             </div>
+            <div class="btn-group">
+                <a class="btn btn-primary btn-sm zoom-photo-page-bounds" title="Zoom to region"><i class="fa fa-arrows-alt"></i>&nbsp;Zoom</a>
+                <a class="btn btn-primary btn-sm filter-photostream" title="Filter this photostream"><i class="fa fa-filter"></i>&nbsp;Filter</a>
+            </div>
             <!--
             <div class="btn-group">
                 <a class="btn btn-primary btn-sm album-page-extents" title="Zoom to the geographic extents of this page of photos"><i class="fa fa-arrows-alt"></i></a>
@@ -74,6 +78,36 @@
         <span class="pull-right">
             Page <%= pageNo %>/<%= pages %>
         </span>
+    </script>
+    <script id="filterDialog" type="template">
+        <div class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"><i class="fa fa-filter"></i>&nbsp;Filter Photostream</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Choose the following filters to apply to the photostream.</p>
+                        <div class="form-group">
+                            <label for="filterYear">Year:</label>
+                            <select class="form-control" id="filterYear" name="filterYear">
+                            <% for (var y = fromYear; y <= toYear; y++) { %>
+                                <% if (y == year) { %>
+                                <option value="<%= y %>" selected="selected"><%= y %></option>
+                                <% } else { %>
+                                <option value="<%= y %>"><%= y %></option>
+                                <% } %>
+                            <% } %>
+                            </select>
+                        </div>
+                        <a class="btn btn-primary apply-filter">Apply</a>
+                        <a class="btn btn-primary reset-filter">Reset</a>
+                        <a class="btn btn-default cancel-btn">Cancel</a>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </script>
     <script id="photosSidebar" type="template">
         <div id="photosPanel" class="panel panel-info">
