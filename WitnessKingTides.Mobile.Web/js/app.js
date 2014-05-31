@@ -10,6 +10,11 @@ var EventAggregator = _.extend({}, Backbone.Events);
 var PROJ_LL84        = new OpenLayers.Projection("EPSG:4326");
 var PROJ_WEBMERCATOR = new OpenLayers.Projection("EPSG:900913");
 
+var BLUEIMP_GALLERY_OPTIONS = {
+    stretchImages: true,
+    useBootstrapModal: false
+};
+
 /* 2014 tide data from original site */
 
 var TIDE_DATA = {
@@ -407,6 +412,7 @@ var MapView = Backbone.View.extend({
 	initialize: function(options) {
         this.tideModalTemplate = _.template($("#tideModal").html());
         this.photoModalTemplate = _.template($("#photoModal").html());
+        this.lightboxTemplate = _.template($("#lightbox").html());
         EventAggregator.on("mapZoomToBounds", _.bind(this.onMapZoomToBounds, this));
 	},
 	render: function() {
@@ -820,7 +826,7 @@ var MapView = Backbone.View.extend({
 	},
 	onShowPhotos: function (e) {
 	    var getPhotoUrlFunc = function (photo) {
-	        return photo.attributes.url_s;
+	        return photo.attributes.url_c;
 	        /*
 	        return OpenLayers.String.format("http://farm${farmid}.staticflickr.com/${serverid}/${id}_${secret}_o.${imgformat}", {
 	            farmid: photo.attributes.farm,
@@ -830,10 +836,39 @@ var MapView = Backbone.View.extend({
 	            imgformat: photo.attributes.originalformat
 	        });*/
 	    };
+	    var getThumbnailFunc = function (photo) {
+	        return photo.attributes.url_s;
+	    };
+        /*
 	    this.showModal(this.photoModalTemplate({
 	        photos: e.photos,
 	        getPhotoUrl: getPhotoUrlFunc
 	    }));
+        */
+	    this.showLightbox({
+	        photos: e.photos,
+	        getPhotoUrl: getPhotoUrlFunc,
+	        getThumbnailUrl: getThumbnailFunc
+	    });
+	},
+	showLightbox: function (args) {
+	    if (this.activeModal) {
+	        this.activeModal.remove();
+	        //You'd think boostrap modal would've removed this for you?
+	        $(".modal-backdrop").remove();
+	    }
+	    this.activeModal = $(this.lightboxTemplate(args));
+	    $("body").append(this.activeModal);
+	    this.activeModal.toggleClass('blueimp-gallery-controls', true);
+	    var links = [];
+	    for (var i = 0; i < args.photos.length; i++) {
+	        links.push({
+	            title: args.photos[i].attributes.title,
+	            href: args.getPhotoUrl(args.photos[i]),
+	            thumbnail: args.getThumbnailUrl(args.photos[i])
+	        });
+	    }
+	    blueimp.Gallery(links, BLUEIMP_GALLERY_OPTIONS);
 	},
 	onPhotoFeatureSelected: function(event) {
 	    this.selectControl.unselect(event.feature);
@@ -1110,6 +1145,25 @@ var UploadPhotoView = Backbone.View.extend({
         });
         */
         EventAggregator.on("updatePhotoLocationField", _.bind(this.onUpdatePhotoLocationField, this));
+	},
+	showLightbox: function(args) {
+	    if (this.activeModal) {
+	        this.activeModal.remove();
+	        //You'd think boostrap modal would've removed this for you?
+	        $(".modal-backdrop").remove();
+	    }
+	    this.activeModal = $(this.lightboxTemplate(args));
+	    $("body").append(this.activeModal);
+	    this.activeModal.toggleClass('blueimp-gallery-controls', true);
+	    var links = [];
+	    for (var i = 0; i < args.photos.length; i++) {
+	        links.push({
+	            title: args.photos[i].attributes.title,
+	            href: args.getPhotoUrl(args.photos[i]),
+	            thumbnail: args.getPhotoUrl(args.photos[i])
+	        });
+	    }
+	    blueimp.Gallery(links, BLUEIMP_GALLERY_OPTIONS);
 	},
 	showModal: function (html) {
 	    if (this.activeModal) {

@@ -60,6 +60,8 @@ namespace WitnessKingTides.Mobile.Web
                     "~/js/Modernizr.js",
                     "~/Scripts/jquery.validate.js",
                     "~/js/bootstrap-datetimepicker.js",
+                    "~/js/jquery.blueimp-gallery.min.js",
+                    "~/js/bootstrap-image-gallery.js",
                     "~/js/OpenLayers.debug.js",
                     "~/js/app.js"));
 
@@ -69,6 +71,8 @@ namespace WitnessKingTides.Mobile.Web
 
                 bundles.Add(new StyleBundle("~/bundles/wktapp/css").Include(
                     "~/css/bootstrap-datetimepicker.css",
+                    "~/css/blueimp-gallery.min.css",
+                    "~/css/bootstrap-image-gallery.css",
                     "~/js/theme/default/style.css",
                     "~/css/app.css"));
             }
@@ -103,6 +107,8 @@ namespace WitnessKingTides.Mobile.Web
                     "~/js/Modernizr.js",
                     "~/Scripts/jquery.validate.js",
                     "~/js/bootstrap-datetimepicker.js",
+                    "~/js/jquery.blueimp-gallery.min.js",
+                    "~/js/bootstrap-image-gallery.js",
                     "~/js/OpenLayers.js",
                     "~/js/app.js"));
 
@@ -111,6 +117,8 @@ namespace WitnessKingTides.Mobile.Web
 
                 bundles.Add(new StyleBundle("~/bundles/wktapp/css").Include(
                     "~/css/bootstrap-datetimepicker.css",
+                    "~/css/blueimp-gallery.min.css",
+                    "~/css/bootstrap-image-gallery.css",
                     "~/js/theme/default/style.css",
                     "~/css/app.css"));
             }
