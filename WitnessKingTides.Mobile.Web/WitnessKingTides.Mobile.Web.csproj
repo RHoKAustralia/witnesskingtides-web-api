@@ -128,12 +128,14 @@
     <Content Include="images\icon.png" />
     <Content Include="images\kingtide-apple-touch-icon.png" />
     <Content Include="images\loading.gif" />
+    <Content Include="images\logo.png" />
     <Content Include="images\marker.png" />
     <Content Include="images\play-pause.png" />
     <Content Include="images\play-pause.svg" />
     <Content Include="images\video-play.png" />
     <Content Include="images\video-play.svg" />
     <Content Include="images\water.png" />
+    <Content Include="images\wkt_logo.png" />
     <Content Include="js\app.js" />
     <Content Include="js\backbone-min.js" />
     <Content Include="js\backbone.js" />
