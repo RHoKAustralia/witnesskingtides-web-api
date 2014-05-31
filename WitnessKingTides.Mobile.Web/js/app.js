@@ -10,6 +10,10 @@ var EventAggregator = _.extend({}, Backbone.Events);
 var PROJ_LL84        = new OpenLayers.Projection("EPSG:4326");
 var PROJ_WEBMERCATOR = new OpenLayers.Projection("EPSG:900913");
 
+var LAYER_USER_POSITION = "User Position";
+var LAYER_TIDES = "Tides";
+var LAYER_PHOTOS = "Flickr Photos";
+
 var BLUEIMP_GALLERY_OPTIONS = {
     stretchImages: true,
     useBootstrapModal: false
@@ -403,7 +407,8 @@ OpenLayers.Control.TextButtonPanel = OpenLayers.Class(OpenLayers.Control.Panel, 
 });
 
 var MapView = Backbone.View.extend({
-	map: null,
+    map: null,
+    userLayers: [],
     activeModal: null,
     tideModalTemplate: null,
     photoModalTemplate: null,
@@ -414,6 +419,30 @@ var MapView = Backbone.View.extend({
         this.photoModalTemplate = _.template($("#photoModal").html());
         this.lightboxTemplate = _.template($("#lightbox").html());
         EventAggregator.on("mapZoomToBounds", _.bind(this.onMapZoomToBounds, this));
+        EventAggregator.on("requestLegendUpdate", _.bind(this.onRequestLegendUpdate, this));
+
+        var that = this;
+        $(document).on("change", "#layer-toggle-tides input[type='checkbox']", function (e) {
+            for (var i = 0; i < that.userLayers.length; i++) {
+                if (that.userLayers[i].name == LAYER_TIDES) {
+                    that.userLayers[i].setVisibility($(e.target).is(":checked"));
+                }
+            }
+        });
+        $(document).on("change", "#layer-toggle-photos input[type='checkbox']", function (e) {
+            for (var i = 0; i < that.userLayers.length; i++) {
+                if (that.userLayers[i].name == LAYER_PHOTOS) {
+                    that.userLayers[i].setVisibility($(e.target).is(":checked"));
+                }
+            }
+        });
+        $(document).on("change", "#layer-toggle-gps input[type='checkbox']", function (e) {
+            for (var i = 0; i < that.userLayers.length; i++) {
+                if (that.userLayers[i].name == LAYER_USER_POSITION) {
+                    that.userLayers[i].setVisibility($(e.target).is(":checked"));
+                }
+            }
+        });
 	},
 	render: function() {
         this.layers = {};
@@ -556,6 +585,9 @@ var MapView = Backbone.View.extend({
             this.map.zoomToExtent(bounds);
         }
     },
+    onRequestLegendUpdate: function() {
+        EventAggregator.trigger("updateLegend", { layers: this.userLayers });
+    },
     onShowPositionOnMap: function(e) {
         if (this.positionLayer) {
             this.positionLayer.removeAllFeatures();
@@ -653,7 +685,7 @@ var MapView = Backbone.View.extend({
             graphicWidth: 16,
             graphicHeight: 16
         });
-        this.positionLayer = new OpenLayers.Layer.Vector("User Position", {
+        this.positionLayer = new OpenLayers.Layer.Vector(LAYER_USER_POSITION, {
             projection: "EPSG:3857",
             styleMap: new OpenLayers.StyleMap({
                 "default": style,
@@ -663,7 +695,11 @@ var MapView = Backbone.View.extend({
                 }
             })
         });
-        this.map.addLayer(this.positionLayer);
+        this.addUserLayer(this.positionLayer);
+    },
+    addUserLayer: function(layer) {
+        this.map.addLayer(layer);
+        this.userLayers.push(layer);
     },
 	createUserUploadedPhotoLayer: function() {
 
@@ -678,7 +714,7 @@ var MapView = Backbone.View.extend({
             graphicHeight: 16
         });
 
-        this.tidesLayer = new OpenLayers.Layer.Vector("Tides", {
+        this.tidesLayer = new OpenLayers.Layer.Vector(LAYER_TIDES, {
             projection: "EPSG:3857",
             styleMap: new OpenLayers.StyleMap({
                 "default": style,
@@ -709,7 +745,7 @@ var MapView = Backbone.View.extend({
         }
         this.tidesLayer.addFeatures(features);
 
-        this.map.addLayer(this.tidesLayer);
+        this.addUserLayer(this.tidesLayer);
         this.updateSelectControl();
         this.tidesLayer.events.on({"featureselected": _.bind(this.onTideSelected, this)});
     },
@@ -777,7 +813,7 @@ var MapView = Backbone.View.extend({
         });
 
 		this.flickrCluster = new OpenLayers.Strategy.Cluster();
-		this.photosLayer = new OpenLayers.Layer.Vector("Flickr Photos", {
+		this.photosLayer = new OpenLayers.Layer.Vector(LAYER_PHOTOS, {
             projection: "EPSG:900913",
             strategies: [
                 this.flickrCluster
@@ -791,7 +827,7 @@ var MapView = Backbone.View.extend({
             })
         });
 
-		this.map.addLayer(this.photosLayer);
+		this.addUserLayer(this.photosLayer);
 		this.updateSelectControl();
 		this.photosLayer.events.on({ "featureselected": _.bind(this.onPhotoFeatureSelected, this) });
 
@@ -911,13 +947,32 @@ var HomeSidebarView = Backbone.View.extend({
     title: "Home",
     icon: "fa fa-home",
 	initialize: function(options) {
-		this.template = _.template($("#homeSidebar").html());
+	    this.template = _.template($("#homeSidebar").html());
+	    this.updateLegendHandler = _.bind(this.onUpdateLegend, this);
+	    EventAggregator.on("updateLegend", this.updateLegendHandler);
 	},
 	render: function() {
-		$(this.el).html(this.template({ title: this.title, icon: this.icon }));
+	    $(this.el).html(this.template({ title: this.title, icon: this.icon }));
+	    EventAggregator.trigger("requestLegendUpdate");
+	},
+	onUpdateLegend: function(e) {
+	    for (var i = 0; i < e.layers.length; i++) {
+	        var layer = e.layers[i];
+	        switch (layer.name) {
+	            case LAYER_PHOTOS:
+	                $("#layer-toggle-photos input[type='checkbox']").prop('checked', layer.getVisibility());
+	                break;
+	            case LAYER_TIDES:
+	                $("#layer-toggle-tides input[type='checkbox']").prop('checked', layer.getVisibility());
+	                break;
+	            case LAYER_USER_POSITION:
+	                $("#layer-toggle-gps input[type='checkbox']").prop('checked', layer.getVisibility());
+	                break;
+	        }
+	    }
 	},
 	teardown: function() {
-
+	    EventAggregator.off("updateLegend", this.updateLegendHandler);
 	}
 });
 

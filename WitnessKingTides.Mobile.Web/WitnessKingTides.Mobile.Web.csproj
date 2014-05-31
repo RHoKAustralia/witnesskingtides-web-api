@@ -108,7 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\app.css" />
+    <Content Include="css\blueimp-gallery.min.css" />
     <Content Include="css\bootstrap-datetimepicker.css" />
+    <Content Include="css\bootstrap-image-gallery.css" />
     <Content Include="css\bootstrap-theme.css" />
     <Content Include="css\bootstrap-theme.min.css" />
     <Content Include="css\bootstrap.css" />
@@ -125,14 +127,23 @@
     <Content Include="images\kingtide-apple-touch-icon.png" />
     <Content Include="images\marker.png" />
     <Content Include="images\water.png" />
+    <Content Include="img\error.png" />
+    <Content Include="img\error.svg" />
+    <Content Include="img\loading.gif" />
+    <Content Include="img\play-pause.png" />
+    <Content Include="img\play-pause.svg" />
+    <Content Include="img\video-play.png" />
+    <Content Include="img\video-play.svg" />
     <Content Include="js\app.js" />
     <Content Include="js\backbone-min.js" />
     <Content Include="js\backbone.js" />
     <Content Include="js\bootstrap-datetimepicker.js" />
+    <Content Include="js\bootstrap-image-gallery.js" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\jquery-1.10.2.js" />
     <Content Include="js\jquery-1.10.2.min.js" />
+    <Content Include="js\jquery.blueimp-gallery.min.js" />
     <Content Include="js\Modernizr.js" />
     <Content Include="js\moment.min.js" />
     <Content Include="js\OpenLayers.debug.js" />
