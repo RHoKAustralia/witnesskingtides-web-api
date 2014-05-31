@@ -69,6 +69,42 @@ div.olControlTextButtonPanel .olButton:hover {
  * Style tweaks
  * --------------------------------------------------
  */
+
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+    border-color: #05761f !important;
+}
+
+.navbar-inverse {
+    background-image: linear-gradient(to bottom, #218638 0%, #0D551D 100%) !important;
+    background-color: #227C3B !important;
+    border-color: #1D5214 !important;
+}
+
+.navbar-inverse .navbar-nav > .active > a {
+    background-image: linear-gradient(to bottom, #145E1A 0%, #12380D 100%) !important;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    background-color: #15380C !important;
+}
+
+.navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+    background-color: #0E500E !important;
+}
+
+.navbar-inverse .navbar-toggle {
+    border-color: #0E500E !important;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #E7DBDB !important;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #E7DBDB !important;
+}
+
 @media (min-width: 767px) and (max-width: 992px) {
     .navbar-btn-label {
         display: none;
