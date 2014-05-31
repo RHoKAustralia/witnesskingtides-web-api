@@ -96,7 +96,7 @@ footer {
 /* App-specific */
 
 .offcanvas-shift {
-    left: -381px !important;
+    left: -390px !important;
 }
 
 #progress {
@@ -152,7 +152,7 @@ footer {
         right: 0px;
     }
     #sidebar {
-        width: 380px;
+        width: 390px;
     }
 }
 @media(max-width: 350px) {
@@ -240,7 +240,7 @@ footer {
 
     .row-offcanvas-right
     .sidebar-offcanvas {
-        right: -380px;
+        right: -390px;
         padding-left: 0px !important;
         padding-right: 0px !important;
     }
@@ -267,7 +267,7 @@ footer {
 @media screen and (max-width: 480px) {
     .row-offcanvas-right
     .sidebar-offcanvas {
-        right: -380px;
+        right: -390px;
         padding-right: 0px;
         padding-left: 0px;
     }
