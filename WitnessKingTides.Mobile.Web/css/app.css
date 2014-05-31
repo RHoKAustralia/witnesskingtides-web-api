@@ -1,4 +1,106 @@
 /**
+ * WKT logo
+ */
+
+img.wkt-navbar-logo {
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    width: 60px;
+    height: 60px;
+}
+
+div.wkt-logo {
+    height: 90px;
+}
+
+div.wkt-logo img {
+    position: absolute;
+    margin: auto;
+    width: 84px;
+    height: 84px;
+    z-index: 5;
+}
+
+p.intro {
+    font-size: 0.9em;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+div.tagline {
+    font-size: 0.8em;
+    position: absolute;
+    top: 65px;
+    right: 30px;
+    left: 30px;
+    margin: auto;
+    padding-top: 5px;
+    padding-left: 96px; 
+    color: #FFFFFF;
+    background-color: #12A2AB;
+}
+
+@media (max-width: 992px) and (min-width: 767px) {
+
+    div.wkt-logo {
+        height: 120px;
+    }
+
+    div.wkt-logo img {
+        top: 72px;
+        width: 64px;
+        height: 64px;
+    }
+    div.tagline {
+        top: 65px;
+        right: 32px;
+        left: 32px;
+        margin: auto;
+        padding-top: 5px;
+        padding-left: 72px; 
+    }
+}
+
+@media (max-width: 850px) and (min-width: 767px) {
+    a.navbar-brand { padding-left: 55px; }
+}
+
+@media (max-width: 767px) {
+    a.navbar-brand { padding-left: 65px; }
+
+    div.wkt-logo img {
+        top: 64px;
+        width: 72px;
+        height: 72px;
+    }
+    div.tagline {
+        top: 80px;
+        right: 16px;
+        left: 16px;
+        margin: auto;
+        padding-top: 5px;
+        padding-left: 82px; 
+    }
+}
+
+@media (max-width: 480px) {
+    div.wkt-logo img {
+        top: 64px;
+        width: 72px;
+        height: 72px;
+    }
+    div.tagline {
+        top: 70px;
+        right: 16px;
+        left: 16px;
+        margin: auto;
+        padding-top: 5px;
+        padding-left: 82px; 
+    }
+}
+
+/**
  * OpenLayers overrides
  */
 .olControlZoom a {
