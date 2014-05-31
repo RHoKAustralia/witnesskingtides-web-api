@@ -1467,6 +1467,12 @@ var app = {
             this.router.setMapView();
             this.router.mapView.setActiveBaseLayer($(e.target));
         }, this));
+        $(document).on("click", "ul.navbar-nav a", function (e) {
+            if (!$(e.target).hasClass("dropdown-toggle")) {
+                //Force click the navbar toggle to "roll" the navbar menu back up
+                $("button.navbar-toggle")[0].click();
+            }
+        });
 		Backbone.history.start();
 	}
 };
