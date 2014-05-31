@@ -19,6 +19,18 @@ var BLUEIMP_GALLERY_OPTIONS = {
     useBootstrapModal: false
 };
 
+function IsMapOffCanvas() {
+    return $("div.row-offcanvas-right").hasClass("offcanvas-shift");
+}
+
+function InvokeSidebarToggler() {
+    $("#sidebarTogglerButton")[0].click();
+}
+
+function RollupNavbar() {
+    $("button.navbar-toggle")[0].click();
+}
+
 /* 2014 tide data from original site */
 
 var TIDE_DATA = {
@@ -1468,9 +1480,15 @@ var app = {
             this.router.mapView.setActiveBaseLayer($(e.target));
         }, this));
         $(document).on("click", "ul.navbar-nav a", function (e) {
-            if (!$(e.target).hasClass("dropdown-toggle")) {
-                //Force click the navbar toggle to "roll" the navbar menu back up
-                $("button.navbar-toggle")[0].click();
+            var el = $(e.target);
+            if (el.closest("li.active").length == 1 && !el.hasClass("base-layer-item") && !IsMapOffCanvas()) {
+                InvokeSidebarToggler();
+                RollupNavbar();
+            } else if (el.hasClass("base-layer-item") && IsMapOffCanvas()) {
+                InvokeSidebarToggler();
+                RollupNavbar();
+            } else if (!el.hasClass("dropdown-toggle")) {
+                RollupNavbar();
             }
         });
 		Backbone.history.start();
