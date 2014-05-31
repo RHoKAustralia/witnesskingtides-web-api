@@ -96,7 +96,7 @@ footer {
 /* App-specific */
 
 .offcanvas-shift {
-    left: -350px !important;
+    left: -381px !important;
 }
 
 #progress {
@@ -267,7 +267,7 @@ footer {
 @media screen and (max-width: 480px) {
     .row-offcanvas-right
     .sidebar-offcanvas {
-        right: -350px;
+        right: -380px;
         padding-right: 0px;
         padding-left: 0px;
     }
