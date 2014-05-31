@@ -2,9 +2,15 @@
  * OpenLayers overrides
  */
 .olControlZoom a {
-    width: 28px !important;
-    height: 28px !important;
-    line-height: 28px !important; /* Ensures vertical alignment of text */
+    width: 35px !important;
+    height: 35px !important;
+    line-height: 35px !important; /* Ensures vertical alignment of text */
+}
+
+.olControlTextButtonPanel .olButton {
+    width: 35px !important;
+    height: 35px !important;
+    line-height: 35px !important; /* Ensures vertical alignment of text */
 }
 
 /**
