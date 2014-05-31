@@ -152,7 +152,7 @@ footer {
         right: 0px;
     }
     #sidebar {
-        width: 350px;
+        width: 380px;
     }
 }
 @media(max-width: 350px) {
@@ -240,7 +240,9 @@ footer {
 
     .row-offcanvas-right
     .sidebar-offcanvas {
-        right: -350px;
+        right: -380px;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
     }
 
     .row-offcanvas-left
