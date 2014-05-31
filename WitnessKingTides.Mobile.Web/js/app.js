@@ -555,9 +555,9 @@ var MapView = Backbone.View.extend({
         $("div.wkt-btn-initialzoomItemInactive").html("<i class='fa fa-arrows-alt'></i>");
 
 		this.map.updateSize();
-        this.createPositionLayer();
+		this.createTideLayer();
+		this.createPositionLayer();
 		this.createFlickrPhotoLayer();
-        this.createTideLayer();
 		this.map.events.register("moveend", this, this.onMoveEnd);
         this.map.events.register("changebaselayer", this, this.onBaseLayerChange);
         this.setActiveBaseLayer($("a.base-layer-item[data-layer-name='goog-phys']"));
