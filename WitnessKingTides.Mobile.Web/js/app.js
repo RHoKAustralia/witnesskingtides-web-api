@@ -1521,6 +1521,9 @@ var app = {
                 RollupNavbar();
             }
         });
+        $(document).on("click", "a.refresh-album", function (e) {
+            EventAggregator.trigger("resetPhotoFilter");
+        });
 		Backbone.history.start();
 	}
 };
