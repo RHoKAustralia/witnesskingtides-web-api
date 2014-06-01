@@ -895,7 +895,7 @@ var MapView = Backbone.View.extend({
 	},
 	onShowPhotos: function (e) {
 	    var getPhotoUrlFunc = function (photo) {
-	        return photo.attributes.url_c;
+	        return photo.attributes.url_c || photo.attributes.url_s;
 	        /*
 	        return OpenLayers.String.format("http://farm${farmid}.staticflickr.com/${serverid}/${id}_${secret}_o.${imgformat}", {
 	            farmid: photo.attributes.farm,
