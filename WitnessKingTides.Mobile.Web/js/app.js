@@ -111,8 +111,12 @@ var TIDE_DATA = {
     }
 };
 
-var FLICKR_USER_ID = '69841693@N07'; //witnesskingtides
-var FLICKR_API_KEY = '3e35f603d86b21583ad77509dd9fd597';
+//var FLICKR_USER_ID = '69841693@N07'; //witnesskingtides
+//var FLICKR_API_KEY = '3e35f603d86b21583ad77509dd9fd597';
+
+//Test account settings
+var FLICKR_USER_ID = '110846737@N06';
+var FLICKR_API_KEY = 'affd35180d0689ad7ca999c1619d0e6d';
 
 var LAYER_GOOG_PHYS = "goog-phys";
 var LAYER_GOOG_STREET = "goog-street";
@@ -1341,6 +1345,7 @@ var UploadPhotoView = Backbone.View.extend({
                         this.activeModal.remove();
                         //You'd think boostrap modal would've removed this for you?
                         $(".modal-backdrop").remove();
+                        EventAggregator.trigger("resetPhotoFilter");
                     }
                     this.insertPhotoMarker(data.Longitude, data.Latitude, data.FlickrId);
                     //Go home on completion
