@@ -6,6 +6,7 @@ Modernizr.addTest('formdata', 'FormData' in window);
 Modernizr.addTest('xhr2', 'FormData' in window && 'ProgressEvent' in window);
 
 var EventAggregator = _.extend({}, Backbone.Events);
+var SERVICE_URL = "http://kingtides-api-env-fubbpjhd29.elasticbeanstalk.com";
 
 var PROJ_LL84        = new OpenLayers.Projection("EPSG:4326");
 var PROJ_WEBMERCATOR = new OpenLayers.Projection("EPSG:900913");
@@ -32,7 +33,7 @@ function RollupNavbar() {
 }
 
 /* 2014 tide data from original site */
-
+/*
 var TIDE_DATA = {
     qld: {
         areaInfo: [{"name":"Abbot Point","encodedName":"Abbot+Point","dateTime":"2 January, 9.47AM","dateRange":"1–3 January","tide":[],"latLng":"-19.9078861, 148.08467259999998"},{"name":"Brisbane  Bar","encodedName":"Brisbane++Bar","dateTime":"2 January, 10.16AM","dateRange":"1–3 January","tide":[],"latLng":"-27.477819, 153.01889119999998"},{"name":"Booby Island","encodedName":"Booby+Island","dateTime":"2 January, 3.49PM","dateRange":"1–3 January","tide":[],"latLng":"-10.6, 141.91666669999995"},{"name":"Bowen","encodedName":"Bowen","dateTime":"2 January, 10.31AM","dateRange":"1–3 January","tide":[],"latLng":"-20.012989496249062, 148.24161529541016"},{"name":"Bundaberg (Burnett Heads)","encodedName":"Bundaberg+(Burnett+Heads)","dateTime":"2 January, 9.08AM","dateRange":"1–3 January","tide":[],"latLng":"-24.875493983465375, 152.34981536865234"},{"name":"Cairns","encodedName":"Cairns","dateTime":"2 January, 9.57AM","dateRange":"1–3 January","tide":[],"latLng":"-16.928219873986436, 145.75647354125977"},{"name":"Gladstone","encodedName":"Gladstone","dateTime":"2 January, 9.45AM","dateRange":"1–3 January","tide":[],"latLng":"-23.862249813222824, 151.2484359741211"},{"name":"Gold Coast Seaway","encodedName":"Gold+Coast+Seaway","dateTime":"2 January, 8.50AM","dateRange":"1–3 January","tide":[],"latLng":"-27.934645, 153.43017429999998"},{"name":"Hay Point","encodedName":"Hay+Point","dateTime":"2 January, 11.20AM","dateRange":"1–3 January","tide":[],"latLng":"-21.3055785, 149.2921629"},{"name":"Lucinda","encodedName":"Lucinda","dateTime":"2 January, 9.44AM","dateRange":"1–3 January","tide":[],"latLng":"-18.5281158, 146.33142079999993"},{"name":"Mackay Outer Harbour","encodedName":"Mackay+Outer+Harbour","dateTime":"2 January, 11.22AM","dateRange":"1–3 January","tide":[],"latLng":"-21.1166667, 149.23333330000003"},{"name":"Mooloolaba","encodedName":"Mooloolaba","dateTime":"2 January, 8.39AM","dateRange":"1–3 January","tide":[],"latLng":"-26.6778695, 153.117347"},{"name":"Mourilyan Harbour","encodedName":"Mourilyan+Harbour","dateTime":"2 January, 9.43AM","dateRange":"1–3 January","tide":[],"latLng":"-17.5964692, 146.1184002"},{"name":"Noosa Head","encodedName":"Noosa+Head","dateTime":"2 January, 8.36AM","dateRange":"1–3 January","tide":[],"latLng":"-26.397933176477725, 153.08993339538574"},{"name":"Port Alma","encodedName":"Port+Alma","dateTime":"2 January, 9.47AM","dateRange":"1–3 January","tide":[],"latLng":"-23.6220066, 150.7327272"},{"name":"Port Douglas","encodedName":"Port+Douglas","dateTime":"2 January, 9.45AM","dateRange":"1–3 January","tide":[],"latLng":"-16.4839785, 145.46583269999996"},{"name":"Rosslyn Bay","encodedName":"Rosslyn+Bay","dateTime":"2 January, 9.36AM","dateRange":"1–3 January","tide":[],"latLng":"-23.165461, 150.79087800000002"},{"name":"Shute Harbour","encodedName":"Shute+Harbour","dateTime":"2 January, 11.17AM","dateRange":"1–3 January","tide":[],"latLng":"-20.2909865, 148.78480590000004"},{"name":"Townsville","encodedName":"Townsville","dateTime":"2 January, 9.40AM","dateRange":"1–3 January","tide":[],"latLng":"-19.26008280877702, 146.81459426879883"},{"name":"Urangan","encodedName":"Urangan","dateTime":"2 January, 9.15AM","dateRange":"1–3 January","tide":[],"latLng":"-25.2815385, 152.9007788"},{"name":"Waddy Point (Fraser Island)","encodedName":"Waddy+Point+(Fraser+Island)","dateTime":"2 January, 8.26AM","dateRange":"1–3 January","tide":[],"latLng":"-24.9657049, 153.34970799999996"},{"name":"Karumba","encodedName":"Karumba","dateTime":"14 January, 6.48PM","dateRange":"13–15 January","tide":[],"latLng":"-17.4871222, 140.84385309999993"},{"name":"Mornington Island","encodedName":"Mornington+Island","dateTime":"9 February, 6.17PM","dateRange":"8–10 February","tide":[],"latLng":"-16.5174872, 139.40594350000003"},{"name":"Weipa (Humbug Point)","encodedName":"Weipa+(Humbug+Point)","dateTime":"2 January, 4.23PM","dateRange":"1–3 January","tide":[],"latLng":"-12.6591475, 141.83840639999994"},{"name":"Goods Island","encodedName":"Goods+Island","dateTime":"2 January, 3.33PM","dateRange":"1–3 January","tide":[],"latLng":"-10.5631623, 142.15672870000003"},{"name":"Thursday Island","encodedName":"Thursday+Island","dateTime":"2 January, 1.31PM","dateRange":"1–3 January","tide":[],"latLng":"-10.579887, 142.21849180000004"},{"name":"Twin Island","encodedName":"Twin+Island","dateTime":"2 January, 12.49PM","dateRange":"1–3 January","tide":[],"latLng":"-10.462299094860645, 142.44742155075073"}],
@@ -110,6 +111,7 @@ var TIDE_DATA = {
         ]
     }
 };
+*/
 
 //var FLICKR_USER_ID = '69841693@N07'; //witnesskingtides
 //var FLICKR_API_KEY = '3e35f603d86b21583ad77509dd9fd597';
@@ -425,6 +427,7 @@ OpenLayers.Control.TextButtonPanel = OpenLayers.Class(OpenLayers.Control.Panel, 
 var MapView = Backbone.View.extend({
     map: null,
     userLayers: [],
+    tideEvents: [],
     activeModal: null,
     tideModalTemplate: null,
     photoModalTemplate: null,
@@ -558,18 +561,25 @@ var MapView = Backbone.View.extend({
         $("div.wkt-btn-locateItemInactive").html("<i class='fa fa-location-arrow'></i>");
         $("div.wkt-btn-initialzoomItemInactive").html("<i class='fa fa-arrows-alt'></i>");
 
-		this.map.updateSize();
-		this.createTideLayer();
-		this.createPositionLayer();
-		this.createFlickrPhotoLayer();
-		this.map.events.register("moveend", this, this.onMoveEnd);
-        this.map.events.register("changebaselayer", this, this.onBaseLayerChange);
-        this.setActiveBaseLayer($("a.base-layer-item[data-layer-name='goog-phys']"));
-		//Initial view is Australia
-        this.initialView();
-        EventAggregator.on("addNewPhotoMarker", _.bind(this.onAddNewPhotoMarker, this));
-        EventAggregator.on("showPositionOnMap", _.bind(this.onShowPositionOnMap, this));
-        EventAggregator.on("toggleManualLocationRecording", _.bind(this.onToggleManualLocationRecording, this));
+        this.map.updateSize();
+
+        $.getJSON(SERVICE_URL + "/tides", _.bind(function (tides) {
+            this.tideEvents = tides;
+            this.createTideLayer();
+            this.createPositionLayer();
+            this.createFlickrPhotoLayer();
+            this.map.events.register("moveend", this, this.onMoveEnd);
+            this.map.events.register("changebaselayer", this, this.onBaseLayerChange);
+            this.setActiveBaseLayer($("a.base-layer-item[data-layer-name='goog-phys']"));
+            //Initial view is Australia
+            this.initialView();
+            EventAggregator.on("addNewPhotoMarker", _.bind(this.onAddNewPhotoMarker, this));
+            EventAggregator.on("showPositionOnMap", _.bind(this.onShowPositionOnMap, this));
+            EventAggregator.on("toggleManualLocationRecording", _.bind(this.onToggleManualLocationRecording, this));
+            EventAggregator.trigger("requestLegendUpdate");
+        }, this));
+
+		
 	},
 	initialView: function() {
 	    var bounds = new OpenLayers.Bounds(10470115.700925, -5508791.4417243, 19060414.686531, -812500.42453675);
@@ -745,7 +755,13 @@ var MapView = Backbone.View.extend({
         var srcProj = PROJ_LL84;
         var dstProj = PROJ_WEBMERCATOR;
         var features = [];
-        for (var state in TIDE_DATA) {
+        for (var i = 0; i < this.tideEvents.length; i++) {
+            var tideEvent = this.tideEvents[i];
+            var pt = new OpenLayers.Geometry.Point(tideEvent.event.longitude, tideEvent.event.latitude);
+            pt.transform(srcProj, dstProj);
+            var feat = new OpenLayers.Feature.Vector(pt, tideEvent);
+            features.push(feat);
+            /*
             var ai = TIDE_DATA[state].areaInfo;
             for (var i = 0; i < ai.length; i++) {
                 var item = ai[i];
@@ -758,6 +774,7 @@ var MapView = Backbone.View.extend({
                     item);
                 features.push(feat);
             }
+             */
         }
         this.tidesLayer.addFeatures(features);
 
@@ -953,7 +970,15 @@ var MapView = Backbone.View.extend({
     onTideSelected: function(event) {
         this.selectControl.unselect(event.feature);
         //alert("Selected tide");
-        this.showModal(this.tideModalTemplate({ tide: event.feature }));
+        this.showModal(this.tideModalTemplate({
+            location: event.feature.attributes.event.location,
+            startDate: moment(event.feature.attributes.event.eventStart).format("Do MMM H:mm A"),
+            range: function () {
+                var start = moment(event.feature.attributes.event.eventStart);
+                var end = moment(event.feature.attributes.event.eventEnd);
+                return start.format("Do MMM") + " to " + end.format("Do MMM");
+            }
+        }));
     }
 });
 
@@ -1270,7 +1295,7 @@ var UploadPhotoView = Backbone.View.extend({
     },
     xhr2upload: function (url, formData, fnProgress) {
         return $.ajax({
-            url: '/home/savephoto/',
+            url: url,
             type: 'POST',
             data: formData,
             xhr: function () {
@@ -1312,7 +1337,7 @@ var UploadPhotoView = Backbone.View.extend({
                 formData.append("LastName", $("#txtSurname").val());
                 formData.append("PhotoLocation", $("#photoLocation").val());
                 formData.append("CreationDate", $("#dtDate").val());
-                formData.append("PhotoFile", $("#photoFile")[0].files[0]);
+                formData.append("Photofile", $("#photoFile")[0].files[0]);
                 formData.append("Description", $("#txtDescription").val());
                 e.preventDefault();
 
@@ -1320,7 +1345,7 @@ var UploadPhotoView = Backbone.View.extend({
                 var progressModal = _.template($("#progressModal").html());
                 this.showModal(progressModal({}));
                 if (Modernizr.xhr2) {
-                    promise = this.xhr2upload("/home/savephoto/", formData, function (prog, value) {
+                    promise = this.xhr2upload(SERVICE_URL + "/upload", formData, function (prog, value) {
                         //console.log("Progress: " + prog + ", Value: " + value);
                         $("#progress").val(value);
                         if (value == 100) {
@@ -1330,7 +1355,7 @@ var UploadPhotoView = Backbone.View.extend({
                     });
                 } else {
                     promise = $.ajax({
-                        url: '/home/savephoto/',
+                        url: SERVICE_URL + "/upload",
                         type: 'POST',
                         data: formData,
                         cache: false,
@@ -1350,7 +1375,7 @@ var UploadPhotoView = Backbone.View.extend({
                     this.insertPhotoMarker(data.Longitude, data.Latitude, data.FlickrId);
                     //Go home on completion
                     window.location.hash = "#home";
-                }, this)).fail(function (jqXHR, textStatus, errorThrown) {
+                }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
                     alert("Failed to upload photo. Error: " + (errorThrown || "unknown") + ", status: " + textStatus);
                     if (this.activeModal) {
                         this.activeModal.remove();
@@ -1360,7 +1385,7 @@ var UploadPhotoView = Backbone.View.extend({
                     //console.error("Ajax failed");
                     btnUp.removeClass("disabled");
                     btnCancel.removeClass("disabled");
-                });
+                }, this));
             } else {
                 btnUp.removeClass("disabled");
                 btnCancel.removeClass("disabled");
