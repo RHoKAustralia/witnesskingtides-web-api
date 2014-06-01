@@ -20,6 +20,10 @@ var BLUEIMP_GALLERY_OPTIONS = {
     useBootstrapModal: false
 };
 
+function IsPhoneDisplay() {
+    return $("#responsiveMarker").is(":visible");
+}
+
 function IsMapOffCanvas() {
     return $("div.row-offcanvas-right").hasClass("offcanvas-shift");
 }
@@ -1460,7 +1464,7 @@ var AppRouter = Backbone.Router.extend({
 
 	    //If we can see our responsive marker it means we're in phone view,
 	    //so we should default the view to the sidebar
-		if ($("#responsiveMarker").is(":visible"))
+		if (IsPhoneDisplay())
 		    $('.row-offcanvas').addClass('offcanvas-shift');
 
 	    //Be sure to toggle the map view.
@@ -1511,7 +1515,7 @@ var app = {
         }, this));
         $(document).on("click", "ul.navbar-nav a", function (e) {
             var el = $(e.target);
-            if (el.closest("li.active").length == 1 && !el.hasClass("base-layer-item") && !IsMapOffCanvas()) {
+            if (el.closest("li.active").length == 1 && !el.hasClass("base-layer-item") && IsPhoneDisplay() && !IsMapOffCanvas()) {
                 InvokeSidebarToggler();
                 RollupNavbar();
             } else if (el.hasClass("base-layer-item") && IsMapOffCanvas()) {
